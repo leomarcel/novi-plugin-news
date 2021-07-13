@@ -1,0 +1,254 @@
+/*
+* Owl News
+* --------------------------------------------------
+*/
+.news .animated {
+    -webkit-animation-duration: 1000ms;
+    animation-duration: 1000ms;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+.news .owl-animated-in {
+    z-index: 0;
+}
+
+.news .owl-animated-out {
+    z-index: 1;
+}
+
+.news .fadeOut {
+    -webkit-animation-name: fadeOut;
+    animation-name: fadeOut;
+}
+
+@-webkit-keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* 
+ * 	Owl News - Auto Height Plugin
+ */
+.owl-height {
+    transition: height 500ms ease-in-out;
+}
+
+/* 
+ *  Core Owl News CSS File
+ */
+.news {
+    display: none;
+    width: 100%;
+    -webkit-tap-highlight-color: transparent;
+    /* position relative and z-index fix webkit rendering fonts issue */
+    position: relative;
+    z-index: 1;
+}
+
+.news .owl-stage {
+    position: relative;
+    -ms-touch-action: pan-Y;
+}
+
+.news .owl-stage:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+.news .owl-stage-outer {
+    position: relative;
+    overflow: hidden;
+    /* fix for flashing background */
+    -webkit-transform: translate3d(0px, 0px, 0px);
+}
+
+.news .owl-controls .owl-nav .owl-prev,
+.news .owl-controls .owl-nav .owl-next,
+.news .owl-controls .owl-dot {
+    cursor: pointer;
+    user-select: none;
+}
+
+.news.owl-loaded {
+    display: block;
+}
+
+.news.owl-loading {
+    opacity: 0;
+    display: block;
+}
+
+.news.owl-hidden {
+    opacity: 0;
+}
+
+.news .owl-refresh .owl-item {
+    display: none;
+}
+
+.news .owl-item {
+    position: relative;
+    min-height: 1px;
+    float: left;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+.news .owl-grab {
+    cursor: move;
+    cursor: -webkit-grab;
+    cursor: grab;
+}
+
+.news.owl-rtl {
+    direction: rtl;
+}
+
+.news.owl-rtl .owl-item {
+    float: right;
+}
+
+/* No Js */
+.no-js .news {
+    display: block;
+}
+
+/* 
+ * 	Owl News - Lazy Load Plugin
+ */
+.news .owl-item .owl-lazy {
+    opacity: 0;
+    transition: opacity 400ms ease;
+}
+
+/* 
+ * 	Owl News - Video Plugin
+ */
+.news .owl-video-wrapper {
+    position: relative;
+    height: 100%;
+    background: #000;
+}
+
+.news .owl-video-play-icon {
+    position: absolute;
+    height: 80px;
+    width: 80px;
+    left: 50%;
+    top: 50%;
+    margin-left: -40px;
+    margin-top: -40px;
+    font: 400 40px/80px 'FontAwesome';
+    cursor: pointer;
+    z-index: 1;
+    transition: scale 100ms ease;
+}
+
+.news .owl-video-play-icon:before {
+    content: '\f144';
+}
+
+.news .owl-video-play-icon:hover {
+    -webkit-transform: scale(1.3);
+    transform: scale(1.3);
+}
+
+.news .owl-video-playing .owl-video-tn,
+.news .owl-video-playing .owl-video-play-icon {
+    display: none;
+}
+
+.news .owl-video-tn {
+    opacity: 0;
+    height: 100%;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    transition: opacity 400ms ease;
+}
+
+.news .owl-video-frame {
+    position: relative;
+    z-index: 1;
+}
+
+/*
+ * Owl Navigation
+ */
+.owl-prev, .owl-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font: 400 46px/50px 'FontAwesome';
+    color: #151515;
+}
+
+.owl-prev:hover, .owl-next:hover {
+    color: #b6c062;
+}
+
+.owl-prev {
+    left: 0;
+}
+
+.owl-prev::before {
+    content: '\f104';
+}
+
+.owl-next {
+    right: 0;
+}
+
+.owl-next::before {
+    content: '\f105';
+}
+
+/*
+ * Owl Pagination
+ */
+.owl-dots {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.owl-dot {
+    position: relative;
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border: 2px solid #151515;
+    border-radius: 50%;
+    margin-left: 5px;
+    margin-right: 5px;
+    text-align: center;
+    outline: none;
+    cursor: pointer;
+    background-color: transparent;
+    transition: .2s;
+}
+
+.owl-dot:hover, .owl-dot:focus {
+    background-color: #151515;
+}
+
+.owl-dot.active {
+    background-color: #151515;
+}
