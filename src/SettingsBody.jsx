@@ -1,36 +1,39 @@
-const Input = novi.ui.input;
+import axios from 'axios';
 const React = novi.react.React;
 const Component = novi.react.Component;
-const Switcher = novi.ui.switcher;
 const InputNumber = novi.ui.inputNumber;
 const Editor = novi.editor;
 const Language = novi.language;
+import Multiselect from 'multiselect-react-dropdown';
+
 export default class Body extends Component {
     constructor(props) {
         super(props);
-        let autoplayTime = novi.element.getAttribute(props.element, 'data-autoplay-timeout') / 1000 || "";
-        let autoplay = novi.element.getAttribute(props.element, 'data-autoplay') === "true";
-        let loop = novi.element.getAttribute(props.element, 'data-loop') === "true";
-        let margins = this.getMargins(props.element);
-        let items = this.getItems(props.element);
+        let items = this.getItems(props.element).length;
+        let selectLayout = props.element.getAttribute("template");
 
-        if (autoplay) Editor.setBodyHeight(220);
+        let menus = [];
+        let selectMenu = null;
+        Editor.setBodyHeight(210);
+
         this.state = {
-            loop,
-            autoplayTime,
-            autoplay,
             items,
-            margins,
+            menus,
+            selectMenu,
+            selectLayout,
             initValue: {
-                loop,
-                autoplayTime,
-                autoplay,
-                items,
-                margins
+                items
             },
             element: props.element,
             childElement: props.childElement
         };
+
+        this._handleNumberItemChange = this._handleNumberItemChange.bind(this);
+        this.onRemove = this.onRemove.bind(this);
+        this.onSelect = this.onSelect.bind(this);
+
+        this.messages = Language.getDataByKey("novi-plugin-news");
+
         this.style = `
         .owl-wrap{
             padding: 0 12px;
@@ -62,121 +65,124 @@ export default class Body extends Component {
             width: 55px;
         }  
         .owl-wrap .Select-menu-outer, .owl-wrap .Select-menu{
-            max-height: 85px;
+            max-height: 8selectLayout5px;
         }
         .owl-group{
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
+        .blockSelect{
+            display: block;
+        }
+        .selectTemplate{
+            width: 100%;
+        }
+        .btnSelectTemplate {
+            font-weight: 400;
+            transition: 0.33s all ease-in;
+            border: 3px;
+            letter-spacing: 0;
+            white-space: normal;
+            max-width: 100%;
+            background-color: #6E778A;
+            color: white;
+            display: inline-block;
+            border-radius: 3px;
+            padding-left: 3px;
+            padding-right: 3px;
+            font-size: 11px;
+            line-height: 24px;
+            position: relative;
+            cursor: pointer;
+        }
+        .hr_settings {
+            border: 1px solid #6E778A;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .title_carousel {
+            margin: 0px;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .multiple_selected {
+            width: 100%;
+            color: white;
+            background-color: #282F3D;
+            border: none;
+            overflow: hidden;
+        }
         `;
-        this._handleItemChange = this._handleItemChange.bind(this);
-        this._handleMarginChange = this._handleMarginChange.bind(this);
-        this._handleAutoplayChange = this._handleAutoplayChange.bind(this);
-        this._handleSwitcherChange = this._handleSwitcherChange.bind(this);
-        this._handleLoopChange = this._handleLoopChange.bind(this);
-        this._renderAutoPlaySeconds = this._renderAutoPlaySeconds.bind(this);
-        this.messages = Language.getDataByKey("novi-plugin-news");
     }
 
+    componentDidMount() {
+        axios.get(`/l/builder/app/php/get-posts-menus`)
+            .then(res => {
+                const menus = res.data;
+                for (const [key, value] of Object.entries(menus)) {
+                    let tempdata = { label: value, value: key }
+                    let menutemp = this.state.menus;
+                    menutemp.push(tempdata)
+                    this.setState({ menus: menutemp });
+                }
+            });
+    }
 
     render() {
-        let activeItem = this.getActiveItemValue(this.state.items);
-        let activeMargin = this.getActiveItemValue(this.state.margins);
         return (
             <div className="owl-wrap">
                 <style>{this.style}</style>
-                <div className="owl-group">
-                    <div>
-                        <p className="novi-label" style={{"marginTop": "0"}}>
-                            {this.messages.editor.settings.body.visibleItems}
-                        </p>
-                        <InputNumber min={1} value={activeItem} onChange={this._handleItemChange}/>
-                    </div>
-                    <div style={{"marginLeft": "10px"}}>
-                        <p className="novi-label" style={{"marginTop": "0"}}>
-                            {this.messages.editor.settings.body.indent}
-                        </p>
-                        <InputNumber min={0} value={activeMargin} onChange={this._handleMarginChange}/>
-                    </div>
-
-
-                </div>
-
-                <div className="owl-switcher">
-                    <p className="novi-label" style={{"margin": 0}}>
-                        {this.messages.editor.settings.body.loop}
-                    </p>
-                    <Switcher isActive={this.state.loop} onChange={this._handleLoopChange}/>
-                </div>
-
-                <div className="owl-switcher">
-                    <p className="novi-label" style={{"margin": 0}}>
-                        {this.messages.editor.settings.body.autoplay}
-                    </p>
-                    <Switcher isActive={this.state.autoplay} onChange={this._handleSwitcherChange}/>
-                </div>
-
-                {this._renderAutoPlaySeconds()}
-            </div>
-
-        )
-    }
-
-    _renderAutoPlaySeconds(){
-        const switcherName = this.state.autoplay ? "owl-switcher": "owl-switcher disabled";
-        return (
-            <div className={switcherName}>
-                <p className="novi-label" style={{"margin": 0}}>
-                    {this.messages.editor.settings.body.autoplayDelay}
+                <p className="novi-label title_carousel" style={{ "margin": 0 }}>
+                    {this.messages.editor.settings.title}
                 </p>
-                <div style={{"maxWidth": "56px"}}>
-                    <InputNumber min={1} value={this.state.autoplayTime} onChange={this._handleAutoplayChange}/>
+
+                <div className="owl-switcher blockSelect">
+                    <p className="novi-label" style={{ "margin": 0 }}>
+                        {this.messages.editor.settings.body.titleMenu}
+                    </p>
+                    <div className="owl-switcher">
+                        <Multiselect
+                            options={this.state.menus}
+                            selectedValues={this.state.selectMenu}
+                            onSelect={this.onSelect}
+                            onRemove={this.onRemove}
+                            displayValue="label"
+                        />
+                    </div>
                 </div>
+
+                <div className="owl-switcher blockSelect">
+                    <p className="novi-label" style={{ "marginTop": "0" }}>
+                        {this.messages.editor.settings.body.visibleItems}
+                    </p>
+                    <div className="owl-switcher">
+                        <InputNumber min={1} max={50} value={this.state.items} onChange={this._handleNumberItemChange} />
+                    </div>
+                </div>
+                {/* <div className="owl-switcher blockSelect">
+                    <button className="btnSelectTemplate" onClick={this.sendNews}>Valider les paramètres</button>
+                </div> */}
             </div>
         )
     }
 
-    _handleAutoplayChange(value) {
+    onSelect(selectedList, selectedItem) {
+        this.setState({ selectMenu: selectedList });
+    }
+
+    onRemove(selectedList, removedItem) {
+        this.setState({ selectMenu: selectedList });
+    }
+
+    _handleNumberItemChange(value) {
         this.setState({
-            autoplayTime: value
+            items: value
         });
     }
 
-    _handleSwitcherChange(isActive) {
-        if (isActive) Editor.setBodyHeight(220);
-        else Editor.setBodyHeight(170);
-        this.setState({ 
-            autoplay: isActive
-        })
-    }
-
-    _handleLoopChange(isActive) {
-        this.setState({
-            loop: isActive
-        })
-    }
-
-    _handleItemChange(value){
-        let items = [];
-        items = items.concat(this.state.items);
-        let activeItem = this.getActiveItem(this.state.element);
-        items[activeItem] = value.toString();
-        this.setState({
-            items
-        });
-    }
-    _handleMarginChange(value){
-        let margins = [];
-        margins = margins.concat(this.state.margins);
-        let activeItem = this.getActiveItem(this.state.element);
-        margins[activeItem] = value.toString();
-        this.setState({
-            margins
-        });
-    }
-
-    getItems(element){
+    getItems(element) {
         return [
             novi.element.getAttribute(element, 'data-items') || null,
             novi.element.getAttribute(element, 'data-xs-items') || null,
@@ -186,35 +192,4 @@ export default class Body extends Component {
             novi.element.getAttribute(element, 'data-xl-items') || null,
         ]
     }
-
-    getMargins(element){
-        return [
-            novi.element.getAttribute(element, 'data-margin')? novi.element.getAttribute(element, 'data-margin').replace("px", "") : null,
-            novi.element.getAttribute(element, 'data-xs-margin') ? novi.element.getAttribute(element, 'data-xs-margin').replace("px", "") : null,
-            novi.element.getAttribute(element, 'data-sm-margin') ? novi.element.getAttribute(element, 'data-sm-margin').replace("px", "") : null,
-            novi.element.getAttribute(element, 'data-md-margin') ? novi.element.getAttribute(element, 'data-md-margin').replace("px", "") : null,
-            novi.element.getAttribute(element, 'data-lg-margin') ? novi.element.getAttribute(element, 'data-lg-margin').replace("px", "") : null,
-            novi.element.getAttribute(element, 'data-xl-margin') ? novi.element.getAttribute(element, 'data-xl-margin').replace("px", "") : null,
-
-        ]
-    }
-
-    getActiveItem(element){
-        let size = novi.viewport.getActiveSize();
-        if (!size.width){
-            size.width = element.ownerDocument.defaultView.innerWidth;
-        }
-
-        return size.width < 480 ? 0 : size.width <768 ? 1 : size.width < 992 ? 2 : size.width < 1200 ? 3 : size.width < 1600 ? 4: 5;
-    }
-
-    getActiveItemValue(items){
-        let resolutionIndex = this.getActiveItem(this.state.element);
-        if (items[resolutionIndex]) return items[resolutionIndex];
-
-        for (let i=resolutionIndex; resolutionIndex >= 0; i--){
-            if (items[i] !== null) return items[i];
-        }
-    }
-
 }

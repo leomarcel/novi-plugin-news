@@ -47,5 +47,8 @@
       "react"
     ]
   },
-  "dependencies": {}
+  "dependencies": {
+    "axios": "^0.21.1",
+    "multiselect-react-dropdown": "^2.0.4"
+  }
 }

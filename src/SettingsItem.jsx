@@ -1,28 +1,30 @@
 import SettingsBody from "./SettingsBody";
-
+import axios from 'axios';
 const React = novi.react.React;
-const Icons = novi.ui.icons;
 const Icon = novi.ui.icon;
-const lodash = novi.utils.lodash;
 const messages = novi.language.getDataByKey("novi-plugin-news");
 let icon = <Icon>
-    <svg viewBox="0 0 27 16" style={{height: 28, width: 28, maxWidth: "inherit", maxHeight: "inherit"}}>
-        <path
-            d="M17,10 C15.8976,10 15,9.1024 15,8 C15,6.8976 15.8976,6 17,6 C18.1024,6 19,6.8976 19,8 C19,9.1024 18.1024,10 17,10 Z M17,7 C16.4486667,7 16,7.44866667 16,8 C16,8.55133333 16.4486667,9 17,9 C17.5513333,9 18,8.55133333 18,8 C18,7.44866667 17.5513333,7 17,7 Z"
-        />
-        <path
-            d="M8,1 L8,2.05144019 L19,2.0758879 L19,1 L8,1 Z M8,0 L19,0 C19.5522847,-1.01453063e-16 20,0.44771525 20,1 L20,2.08777076 L7,2.0470348 L7,1 C7,0.44771525 7.44771525,1.01453063e-16 8,0 Z"
-        />
-        <path
-            d="M20.5,2 L6.5,2 C5.673,2 5,2.673 5,3.5 L5,14.5 C5,15.327 5.673,16 6.5,16 L20.5,16 C21.327,16 22,15.327 22,14.5 L22,3.5 C22,2.673 21.327,2 20.5,2 Z M6,12.693 L10.197,8.076 C10.282,7.983 10.393,7.931 10.511,7.929 C10.629,7.927 10.742,7.977 10.829,8.068 L17.329,15 L6.499,15 C6.223,15 5.999,14.776 5.999,14.5 L6,12.693 Z M20.5,15 L18.714,15 L11.553,7.377 C11.272,7.083 10.898,6.925 10.5,6.93 C10.102,6.935 9.732,7.103 9.458,7.404 L6.001,11.207 L6.001,3.5 C6.001,3.224 6.225,3 6.501,3 L20.501,3 C20.777,3 21.001,3.224 21.001,3.5 L21.001,14.5 C21,14.776 20.776,15 20.5,15 Z"
-        />
-        <path
-            d="M2.85325,11.85225 C3.04825,11.65725 3.04825,11.34025 2.85325,11.14525 L1.20725,9.49925 L2.85325,7.85325 C3.04825,7.65825 3.04825,7.34125 2.85325,7.14625 C2.65825,6.95125 2.34125,6.95125 2.14625,7.14625 L0.14625,9.14625 C-0.04875,9.34125 -0.04875,9.65825 0.14625,9.85325 L2.14625,11.85325 C2.24425,11.95125 2.37225,11.99925 2.50025,11.99925 C2.62725,11.99825 2.75525,11.94925 2.85325,11.85225 Z"
-        />
-        <path
-            d="M26.85325,11.85225 C27.04825,11.65725 27.04825,11.34025 26.85325,11.14525 L25.20725,9.49925 L26.85325,7.85325 C27.04825,7.65825 27.04825,7.34125 26.85325,7.14625 C26.65825,6.95125 26.34125,6.95125 26.14625,7.14625 L24.14625,9.14625 C23.95125,9.34125 23.95125,9.65825 24.14625,9.85325 L26.14625,11.85325 C26.24425,11.95125 26.37225,11.99925 26.50025,11.99925 C26.62725,11.99825 26.75525,11.94925 26.85325,11.85225 Z"
-            transform="translate(25.499750, 9.499625) scale(-1, 1) translate(-25.499750, -9.499625) "
-        />
+    <svg viewBox="0 0 20 20" style={{ height: 20, width: 20, maxWidth: "inherit", maxHeight: "inherit" }}>
+        <path d="M17.5,20h-16C0.7,20,0,19.3,0,18.5v-16C0,1.7,0.7,1,1.5,1h16C18.3,1,19,1.7,19,2.5v16C19,19.3,18.3,20,17.5,20z M1.5,2
+        C1.2,2,1,2.2,1,2.5v16C1,18.8,1.2,19,1.5,19h16c0.3,0,0.5-0.2,0.5-0.5v-16C18,2.2,17.8,2,17.5,2H1.5z"/>
+        <path d="M2.1,7.7L2.1,7.7c0.3,0,0.5-0.2,0.5-0.5V5.5l1.5,2c0.1,0.1,0.2,0.2,0.4,0.2h0c0,0,0,0,0,0c0,0,0,0,0,0h0
+            c0.3,0,0.5-0.2,0.5-0.5V4c0-0.3-0.2-0.5-0.5-0.5h0C4.3,3.5,4.1,3.7,4.1,4v1.7l-1.5-2C2.6,3.6,2.4,3.5,2.2,3.5h0c0,0,0,0,0,0
+            c0,0,0,0,0,0h0C1.9,3.5,1.7,3.7,1.7,4v3.2C1.7,7.5,1.9,7.7,2.1,7.7z"/>
+        <path d="M8.1,6.8H6.6V6.1h1.3c0.3,0,0.5-0.2,0.5-0.5v0c0-0.3-0.2-0.5-0.5-0.5H6.6V4.5h1.5c0.3,0,0.5-0.2,0.5-0.5v0
+            c0-0.3-0.2-0.5-0.5-0.5h-2C5.8,3.5,5.6,3.7,5.6,4v3.2c0,0.3,0.2,0.5,0.5,0.5h2.1c0.3,0,0.5-0.2,0.5-0.5C8.6,7,8.4,6.8,8.1,6.8z"/>
+        <path d="M10.3,7.7L10.3,7.7C10.4,7.7,10.4,7.7,10.3,7.7C10.4,7.7,10.4,7.7,10.3,7.7L10.3,7.7c0.3,0,0.5-0.1,0.5-0.3l0.6-1.8l0.6,1.8
+            c0.1,0.2,0.3,0.3,0.5,0.3h0c0,0,0,0,0,0s0,0,0,0h0c0.2,0,0.4-0.1,0.5-0.3l1.1-3.2c0.1-0.2,0-0.3-0.1-0.4c-0.1-0.1-0.2-0.2-0.4-0.2
+            h-0.1c-0.2,0-0.4,0.1-0.5,0.3l-0.6,1.8L12,3.9c-0.1-0.2-0.3-0.3-0.5-0.3h-0.1c-0.2,0-0.4,0.1-0.5,0.3l-0.6,1.8L9.8,3.9
+            C9.7,3.7,9.5,3.5,9.3,3.5H9.3c-0.2,0-0.3,0.1-0.4,0.2C8.8,3.9,8.7,4,8.8,4.2l1.1,3.2C10,7.6,10.1,7.7,10.3,7.7z"/>
+        <path d="M15.8,7.7c1.1,0,1.6-0.6,1.6-1.3c0-1-0.8-1.2-1.3-1.4c-0.6-0.2-0.6-0.2-0.6-0.4c0-0.1,0.2-0.2,0.5-0.2
+            c0.2,0,0.4,0.1,0.6,0.1c0.2,0.1,0.5,0.1,0.7-0.2l0,0c0.1-0.1,0.1-0.2,0.1-0.4c0-0.1-0.1-0.2-0.2-0.3c-0.3-0.2-0.7-0.3-1.1-0.3
+            c-1,0-1.5,0.6-1.5,1.2c0,0.9,0.8,1.2,1.3,1.4c0.6,0.2,0.6,0.2,0.6,0.4c0,0.2-0.3,0.2-0.6,0.2c-0.3,0-0.5-0.1-0.7-0.3
+            c-0.1-0.1-0.2-0.1-0.3-0.1c0,0,0,0,0,0c-0.1,0-0.3,0.1-0.3,0.1l0,0c-0.1,0.1-0.1,0.2-0.1,0.4c0,0.1,0.1,0.3,0.1,0.3
+            C14.7,7.5,15.3,7.7,15.8,7.7z"/>
+        <path d="M7.2,9.2H2.6c-0.5,0-0.9,0.4-0.9,0.9c0,0.5,0.4,0.9,0.9,0.9h4.7c0.5,0,0.9-0.4,0.9-0.9C8.2,9.6,7.8,9.2,7.2,9.2z" />
+        <path d="M7.2,12.3H2.6c-0.5,0-0.9,0.4-0.9,0.9s0.4,0.9,0.9,0.9h4.7c0.5,0,0.9-0.4,0.9-0.9C8.2,12.7,7.8,12.3,7.2,12.3z" />
+        <path d="M7.2,15.5H2.6c-0.5,0-0.9,0.4-0.9,0.9c0,0.5,0.4,0.9,0.9,0.9h4.7c0.5,0,0.9-0.4,0.9-0.9C8.2,15.9,7.8,15.5,7.2,15.5z" />
+        <path d="M16.8,9H9.6C9.3,9,9.1,9.3,9.1,9.6v7.4c0,0.3,0.2,0.5,0.5,0.5h7.2c0.3,0,0.5-0.2,0.5-0.5V9.6C17.4,9.3,17.1,9,16.8,9z" />
     </svg>
 </Icon>;
 
@@ -42,71 +44,82 @@ const SettingsItem = {
 export default SettingsItem;
 
 function onSubmitAction(headerStates, bodyStates) {
-    let shoudPageReload = false;
+    // background-video-with-carousel
+    // carousel-fullwidth
+    // carousel-simple
+    // carousel-with-pagination
+    // post-carousel-variant-1
+    // post-carousel-variant-3
+    // post-carousel-variant-4
+    // post-carousel-variant-2
+    // post-carousel-variant-5
+    // post-carousel-variant-6
+    // services-variant-4
+
     let state = bodyStates[0];
+
     let values = {
-        loop: state.loop,
-        autoplayTime: state.autoplayTime,
-        autoplay: state.autoplay,
         items: state.items,
-        margins: state.margins
+        selectLayout: state.selectLayout,
+        selectMenu: state.selectMenu,
     };
 
-    if(lodash.isEqual(state.initValue, values) ) return;
+    var settingsReq = new FormData()
+    let menus = [];
+    for (let i = 0; i < values.selectMenu.length; i++) {
+        menus.push(values.selectMenu[i].value);
+    }
+    settingsReq.append('menus', menus);
+    settingsReq.append('layout', values.selectLayout);
+    settingsReq.append('nbr', values.items);
 
-    if (!lodash.isEqual(values.margins, state.initValue.margins)) {
-        let resolutions = [
-            'data-margin',
-            'data-xs-margin',
-            'data-sm-margin',
-            'data-md-margin',
-            'data-lg-margin',
-            'data-xl-margin'
-        ];
+    axios.post(`/l/builder/app/php/get-posts-by-menus`, settingsReq)
+        .then(res => {
+            console.log(res.data);
 
-        for (let i=0; i<resolutions.length; i++){
-            if (values.margins[i] !== state.initValue.margins[i]){
-                novi.element.setAttribute(state.element,`${resolutions[i]}`, values.margins[i]);
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(res.data, 'text/html');
+
+            for (let i = 0; i < doc.body.querySelectorAll("img").length; i++){
+                if (doc.body.querySelectorAll("img")[i].getAttribute("src").length <= 0)
+                    doc.body.querySelectorAll("img")[i].setAttribute("src", "https://t4.ftcdn.net/jpg/01/67/74/79/360_F_167747932_NE1da5cf9FM30QExtlFjbmk9ypItoJl2.jpg");
             }
-        }
-        shoudPageReload = true;
-    }
+            let content = doc.body;
+            let origin = content.cloneNode(true);
+            // content = content.innerHTML; 
+            console.log(content)
+            console.log("state.element")
+            console.log(state.element)
+            console.log(novi.element)
+            // state.element.innerHTML = ";c"
+            // novi.element.setAttribute(state.element, "template", ":c")
 
-    if (!lodash.isEqual(values.items, state.initValue.items)) {
-        let resolutions = [
-            'data-items',
-            'data-xs-items',
-            'data-sm-items',
-            'data-md-items',
-            'data-lg-items',
-            'data-xl-items'
-        ];
+            // let staticSlide = novi.element.getStaticReference(childElement);
+            // let newStaticSlide = staticSlide.cloneNode(true);
+            // let staticSlideParent = novi.element.getStaticReference(element);
+            // novi.element.appendStatic(newStaticSlide, staticSlideParent);
+            // console.log("staticreference")
+            // console.log(novi.element.getStaticReference(state.element))
 
-        for (let i=0; i<resolutions.length; i++){
-            if (values.items[i] !== state.initValue.items[i]){
-                novi.element.setAttribute(state.element,`${resolutions[i]}`, values.items[i]);
-            }
-        }
-        shoudPageReload = true;
-    }
-    if (values.loop !== state.initValue.loop){
-        novi.element.setAttribute(state.element, "data-loop", values.loop);
-        state.element.setAttribute("data-loop", values.loop);
-    }
+            // novi.element.removeStatic(state.element.querySelectorAll("img")[0]); //ok
+            content = content.querySelector("section");
+            novi.element.appendStatic(content, state.element.parentElement.parentElement.parentElement.parentElement.parentElement); //new slide, slideparent
+            
+            
+            // console.log("appendStatic")
 
-
-    if (values.autoplay !== state.initValue.autoplay){
-        novi.element.setAttribute(state.element, "data-autoplay", values.autoplay);
-        state.element.setAttribute("data-autoplay", values.autoplay);
-    }
-
-
-    if (values.autoplayTime !== state.initValue.autoplayTime){
-        novi.element.setAttribute(state.element, "data-autoplay-timeout", values.autoplayTime * 1000);
-        state.element.setAttribute("data-autoplay-timeout", values.autoplayTime * 1000);
-    }
-
-    if (shoudPageReload) novi.page.forceUpdate();
+            // console.log(novi.element.appendStatic(content, state.element.parentElement.parentElement.parentElement))
+            console.log("ok")
+            
+            // novi.page.forceUpdate();
+            // console.log(state.element.querySelector("section"))
+            // state.element.parentElement.parentElement.parentElement.innerHTML = content;
+            // if (state.element.querySelector("section")) state.element.innerHTML = content;
+            // else if (state.element.parentElement.querySelector("section")) state.element.parentElement.innerHTML = content;
+            // else if (state.element.parentElement.parentElement.querySelector("section")) state.element.parentElement.parentElement.innerHTML = content;
+            // else if (state.element.parentElement.parentElement.parentElement.querySelector("section")) state.element.parentElement.parentElement.parentElement.innerHTML = content;
+            // else if (state.element.parentElement.parentElement.parentElement.parentElement.querySelector("section")) state.element.parentElement.parentElement.parentElement.parentElement.innerHTML = content;
+            // if (state.element.parentElement.has)
+            // novi.page.forceUpdate();
+        });
 }
-
-

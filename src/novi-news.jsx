@@ -1,25 +1,21 @@
 const React = novi.react.React;
 import SettingsItem from "./SettingsItem";
-import MoveSlideLeftItem from "./MoveSlideLeftItem";
-import MoveSlideRightItem from "./MoveSlideRightItem";
-import AddSlideItem from "./AddSlideItem";
-import RemoveSlideItem from "./RemoveSlideItem";
 import Settings from "./Settings";
 const Language = novi.language;
 const Plugin = {
     name: "novi-plugin-news",
-    title: "Novi News Plugin",
-    description: "Novi Plugin for display news",
+    title: "News Carousel Plugin",
+    description: "Novi Plugin for display News",
     version: "1.0.2",
     dependencies: {
         novi: "0.9.0"
     },
     defaults: {
-        querySelector: '.news',
-        childQuerySelector : '.news .owl-item > *'
+        querySelector: '.owl-carousel',
+        childQuerySelector : '.owl-carousel .owl-item > *'
     },
     ui: {
-        editor: [MoveSlideLeftItem, SettingsItem, AddSlideItem, RemoveSlideItem, MoveSlideRightItem],
+        editor: [SettingsItem],
         settings: <Settings/>,
     },
     onLanguageChange : onLanguageChange

@@ -27,7 +27,7 @@ export default class Settings extends Component {
     render() {
         return (
             <div>
-                <span style={{letterSpacing: "0,0462em"}}>Owl News Plugin</span>
+                <span style={{letterSpacing: "0,0462em"}}>News Plugin</span>
                 <div style={{fontSize: 13, color: "#6E778A", marginTop: 21}}>{this.messages.settings.inputPlaceholder}</div>
                     <Input style={{marginTop: 10, width: 340}} value={this.state.settings.querySelector} onChange={this.onChange}/>
                 <div style={{marginTop: 30}}>
