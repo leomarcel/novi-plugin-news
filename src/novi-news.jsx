@@ -11,7 +11,7 @@ const Plugin = {
         novi: "0.9.0"
     },
     defaults: {
-        querySelector: '.owl-carousel',
+        querySelector: ".owl-carousel, .document",
         childQuerySelector : '.owl-carousel .owl-item > *'
     },
     ui: {

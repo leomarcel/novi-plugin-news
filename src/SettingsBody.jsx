@@ -10,13 +10,14 @@ export default class Body extends Component {
     constructor(props) {
         super(props);
         let items = this.getItems(props.element).length;
-        let selectLayout = props.element.getAttribute("template");
-
+        let selectLayout = this.getTemplate(props.element);
+        let type = null;
         let menus = [];
         let selectMenu = null;
         Editor.setBodyHeight(210);
 
         this.state = {
+            type,
             items,
             menus,
             selectMenu,
@@ -29,6 +30,9 @@ export default class Body extends Component {
         };
 
         this._handleNumberItemChange = this._handleNumberItemChange.bind(this);
+        this.getType = this.getType.bind(this);
+        this.getMenu = this.getMenu.bind(this);
+        this.getTemplate = this.getTemplate.bind(this);
         this.onRemove = this.onRemove.bind(this);
         this.onSelect = this.onSelect.bind(this);
 
@@ -118,16 +122,35 @@ export default class Body extends Component {
     }
 
     componentDidMount() {
-        axios.get(`/l/builder/app/php/get-posts-menus`)
-            .then(res => {
-                const menus = res.data;
-                for (const [key, value] of Object.entries(menus)) {
-                    let tempdata = { label: value, value: key }
-                    let menutemp = this.state.menus;
-                    menutemp.push(tempdata)
-                    this.setState({ menus: menutemp });
-                }
-            });
+        this.getType(this.state.element);
+        this.getMenu();
+    }
+    
+    getType(element){
+        // console.log(element)
+        let el = element.parentElement.querySelector(".owl-carousel, .document");
+        if (el) this.state.type = el.parentElement.querySelector(".owl-carousel") ? "news" : "document";
+        console.log("plugin type : " + this.state.type)
+    }
+
+    getMenu(){
+        axios.get("/l/builder/app/php/get-posts-menus")
+        .then(res => {
+            const menus = res.data;
+            for (const [key, value] of Object.entries(menus)) {
+                let tempdata = { label: value, value: key }
+                let menutemp = this.state.menus;
+                menutemp.push(tempdata)
+                this.setState({ menus: menutemp });
+            }
+        });
+    }
+
+    getTemplate(element){
+        for (let i = 0; i < 5; i++) {
+            if (element.getAttribute("template")) return element.getAttribute("template")
+            else element = element.parentElement
+        }
     }
 
     render() {
@@ -161,9 +184,6 @@ export default class Body extends Component {
                         <InputNumber min={1} max={50} value={this.state.items} onChange={this._handleNumberItemChange} />
                     </div>
                 </div>
-                {/* <div className="owl-switcher blockSelect">
-                    <button className="btnSelectTemplate" onClick={this.sendNews}>Valider les paramètres</button>
-                </div> */}
             </div>
         )
     }

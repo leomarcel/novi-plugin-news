@@ -38,7 +38,8 @@ const SettingsItem = {
     onSubmit: onSubmitAction,
     width: 350,
     height: 170,
-    submitOnBlur: false
+    submitOnBlur: false,
+    // onTriggerClick: removeSlide
 };
 
 export default SettingsItem;
@@ -56,95 +57,64 @@ function onSubmitAction(headerStates, bodyStates) {
     // post-carousel-variant-6
     // services-variant-4
 
+    //documents
+    //documents-variant-1
+    //documents-variant-2
+    //documents-variant-3
+    //documents-variant-4
+    //documents-variant-5
+    //documents-variant-6
+    //documents-variant-7
+    //documents-variant-8
+
     let state = bodyStates[0];
 
     let values = {
         items: state.items,
         selectLayout: state.selectLayout,
         selectMenu: state.selectMenu,
+        type: state.type
     };
+
+    if (values.selectMenu <= 0) return;
 
     var settingsReq = new FormData()
     let menus = [];
     for (let i = 0; i < values.selectMenu.length; i++) {
         menus.push(values.selectMenu[i].value);
     }
+
+    //temporaire
+    // if (values.type == "document") values.selectLayout = "post-carousel-variant-3"
+
     settingsReq.append('menus', menus);
     settingsReq.append('layout', values.selectLayout);
     settingsReq.append('nbr', values.items);
 
-    axios.post(`/l/builder/app/php/get-posts-by-menus`, settingsReq)
-        .then(res => {
-            console.log(res.data);
+    console.log(values)
+    console.log(novi.element)
 
+    axios.post(values.type == "news" ? `/l/builder/app/php/get-posts-by-menus` : `/l/builder/app/php/get-paths-by-menus`, settingsReq)
+        .then(res => {
+            // console.log(res.data);
             var parser = new DOMParser();
             var doc = parser.parseFromString(res.data, 'text/html');
 
-            for (let i = 0; i < doc.body.querySelectorAll("img").length; i++){
+            //si pas d'image par default
+            for (let i = 0; i < doc.body.querySelectorAll("img").length; i++) {
                 if (doc.body.querySelectorAll("img")[i].getAttribute("src").length <= 0)
-                    doc.body.querySelectorAll("img")[i].setAttribute("src", "https://t4.ftcdn.net/jpg/01/67/74/79/360_F_167747932_NE1da5cf9FM30QExtlFjbmk9ypItoJl2.jpg");
+                    doc.body.querySelectorAll("img")[i].setAttribute("src", "https://images.unsplash.com/photo-1495020689067-958852a7765e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80");
             }
-            let content = doc.body;
-            // let origin = content.cloneNode(true);
-            // content = content.innerHTML; 
-            console.log(content)
-            console.log("state.element")
-            console.log(state.element)
-            console.log(novi.element)
-            // state.element.innerHTML = ";c"
-            // novi.element.setAttribute(state.element, "template", ":c")
-
-            // let staticSlide = novi.element.getStaticReference(childElement);
-            // let newStaticSlide = staticSlide.cloneNode(true);
-            // let staticSlideParent = novi.element.getStaticReference(element);
-            // novi.element.appendStatic(newStaticSlide, staticSlideParent);
-            // console.log("staticreference")
-            // console.log(novi.element.getStaticReference(state.element))
-
-            // novi.element.appendStatic(content.querySelector("section"), state.element.parentElement.parentElement.parentElement.parentElement.parentElement); //new slide, slideparent
-            // novi.element.removeStatic(state.element.parentElement.parentElement.parentElement.parentElement.parentElement.querySelectorAll("section")[0]);
-            
-            
-            // console.log(state.element.owl)
-            // state.element.owl[0].outerHTML = ":c";
-            // state.element.owl.trigger('refresh.owl.carousel');
-            // state.element.owl[0].trigger('refresh.owl.carousel');
-
-            // novi.element.setAttribute(state.element, "template", "test")
-            // novi.element.duplicate(state.element.querySelector("article"))
-
-
-            // console.log(state.element.parentElement)
-            // console.log(content.querySelector(".owl-carousel"))
-
-            //
-            novi.element.appendStatic(content.querySelector(".owl-carousel"), state.element.parentElement); //new slide, slideparent
-            novi.element.removeStatic(state.element.parentElement.querySelectorAll("img")[0]);
-            // novi.element.insertStaticBefore(test.body, novi.element.getStaticReference(state.element.parentElement))
-            // state.element.querySelector(".owl-carousel").innerHTML = content;
-            // novi.element.duplicate(content)
-            
-            
-            // novi.element.remove(state.element.parentElement)
-            
-            
-            // console.log(content.querySelector(".owl-carousel"))
-
-            // console.log(state.element)
-            // console.log("appendStatic")
-
-            
-            // console.log("ok")
-            
-            // novi.page.forceUpdate();
-            // console.log(state.element.querySelector("section"))
-            // state.element.parentElement.parentElement.parentElement.innerHTML = content;
-            // if (state.element.querySelector("section")) state.element.innerHTML = content;
-            // else if (state.element.parentElement.querySelector("section")) state.element.parentElement.innerHTML = content;
-            // else if (state.element.parentElement.parentElement.querySelector("section")) state.element.parentElement.parentElement.innerHTML = content;
-            // else if (state.element.parentElement.parentElement.parentElement.querySelector("section")) state.element.parentElement.parentElement.parentElement.innerHTML = content;
-            // else if (state.element.parentElement.parentElement.parentElement.parentElement.querySelector("section")) state.element.parentElement.parentElement.parentElement.parentElement.innerHTML = content;
-            // if (state.element.parentElement.has)
-            // novi.page.forceUpdate();
+            let content = doc.body.querySelector("section");
+            console.log(content);
+            for (let i = 0; i < 6; i++) {
+                if (state.element.classList.contains("section")) {
+                    novi.element.insertElement(content, state.element)
+                    novi.element.remove(state.element);
+                    novi.page.forceUpdate();
+                    return;
+                }
+                else state.element = state.element.parentElement
+            }
         });
 }
