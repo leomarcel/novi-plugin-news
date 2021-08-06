@@ -13,7 +13,7 @@ export default class Settings extends Component {
         };
         this.saveSettings = this.saveSettings.bind(this);
         this.onChange = this.onChange.bind(this);
-        this.messages = Language.getDataByKey("novi-plugin-news");
+        this.messages = Language.getDataByKey("novi-plugin-news-document");
     }
 
     componentWillReceiveProps(props){
@@ -47,6 +47,6 @@ export default class Settings extends Component {
     }
 
     saveSettings(){
-        novi.plugins.settings.update("novi-plugin-news", this.state.settings);
+        novi.plugins.settings.update("novi-plugin-news-document", this.state.settings);
     }
 }
