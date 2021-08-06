@@ -55,7 +55,7 @@ function onSubmitAction(headerStates, bodyStates) {
     // post-carousel-variant-5
     // post-carousel-variant-6
     // services-variant-4
-
+    
     let state = bodyStates[0];
 
     let values = {
@@ -89,8 +89,13 @@ function onSubmitAction(headerStates, bodyStates) {
                 if (doc.body.querySelectorAll("img")[i].getAttribute("src").length <= 0)
                     doc.body.querySelectorAll("img")[i].setAttribute("src", "https://images.unsplash.com/photo-1495020689067-958852a7765e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80");
             }
+            doc.querySelector(".owl-carousel").setAttribute("menus", menus);
+            doc.querySelector(".owl-carousel").setAttribute("layout", values.selectLayout.toString());
+            doc.querySelector(".owl-carousel").setAttribute("nbr", values.items.toString());
+
             let content = doc.body.querySelector("section");
             console.log(content);
+            
             for (let i = 0; i < 6; i++) {
                 if (state.element.classList.contains("section")) {
                     novi.element.insertElement(content, state.element)

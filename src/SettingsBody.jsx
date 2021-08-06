@@ -9,11 +9,12 @@ import Multiselect from 'multiselect-react-dropdown';
 export default class Body extends Component {
     constructor(props) {
         super(props);
-        let items = this.getItems(props.element).length;
         let selectLayout = this.getTemplate(props.element);
         let menus = [];
-        let selectMenu = null;
         Editor.setBodyHeight(220);
+        let selectMenu = null;
+        let items = null;
+        console.log(selectMenu)
 
         this.state = {
             items,
@@ -30,6 +31,9 @@ export default class Body extends Component {
         this._handleNumberItemChange = this._handleNumberItemChange.bind(this);
         this.getMenu = this.getMenu.bind(this);
         this.getTemplate = this.getTemplate.bind(this);
+        this.getPredefinedItems = this.getPredefinedItems.bind(this);
+        this.getPredefinedMenu = this.getPredefinedMenu.bind(this);
+        this.arraySearch = this.arraySearch.bind(this);
         this.onRemove = this.onRemove.bind(this);
         this.onSelect = this.onSelect.bind(this);
 
@@ -125,21 +129,50 @@ export default class Body extends Component {
     componentDidMount() {
         this.getMenu();
     }
-
-    getMenu(){
+    getMenu() {
         axios.get("/l/builder/app/php/get-posts-menus")
-        .then(res => {
-            const menus = res.data;
-            for (const [key, value] of Object.entries(menus)) {
-                let tempdata = { label: value, value: key }
-                let menutemp = this.state.menus;
-                menutemp.push(tempdata)
-                this.setState({ menus: menutemp });
+            .then(res => {
+                const menus = res.data;
+                for (const [key, value] of Object.entries(menus)) {
+                    let tempdata = { label: value, value: key }
+                    let menutemp = this.state.menus;
+                    menutemp.push(tempdata)
+                    this.setState({ menus: menutemp });
+                    console.log("getmenuok")
+                    console.log(menutemp)
+                }
+
+                this.state.selectMenu = this.getPredefinedMenu(this.state.element);
+                this.state.items = this.getPredefinedItems(this.state.element);
+            });
+    }
+    getPredefinedItems(element) {
+        if (element.getAttribute("nbr")) return element.getAttribute("nbr")
+        else return this.getItems(element).length;
+    }
+    arraySearch(arr, val) {
+        for (let el = 0; el < arr.length; el++) {
+            if (arr[el].value == val) return arr[el].label   
+        }
+        return null
+    }
+    getPredefinedMenu(element) {
+        if (element.getAttribute("menus")) {
+            let res = element.getAttribute("menus").split(",");
+            console.log(res)
+            console.log(this.state.menus)
+            let arr = [];
+            let ms = this.state.menus;
+            for (let i = 0; i < res.length; i++) {
+                arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
             }
-        });
+            console.log(arr);
+            return arr;
+        }
+        else return null
     }
 
-    getTemplate(element){
+    getTemplate(element) {
         for (let i = 0; i < 5; i++) {
             if (element.getAttribute("template")) return element.getAttribute("template")
             else element = element.parentElement
@@ -151,12 +184,12 @@ export default class Body extends Component {
             <div className="owl-wrap">
                 <style>{this.style}</style>
                 <p className="novi-label title_carousel" style={{ "margin": 0 }}>
-                {this.messages.editor.settings.title}
+                    {this.messages.editor.settings.title}
                 </p>
 
                 <div className="owl-switcher blockSelect">
                     <p className="novi-label" style={{ "margin": 0 }}>
-                    { this.messages.editor.settings.body.titleMenu}
+                        {this.messages.editor.settings.body.titleMenu}
                     </p>
                     <div className="owl-switcher">
                         <Multiselect
@@ -182,6 +215,7 @@ export default class Body extends Component {
     }
 
     onSelect(selectedList, selectedItem) {
+        console.log(selectedList);
         if (selectedList.length >= 3) Editor.setBodyHeight(240);
         if (selectedList.length >= 6) Editor.setBodyHeight(255);
         if (selectedList.length >= 8) Editor.setBodyHeight(260);

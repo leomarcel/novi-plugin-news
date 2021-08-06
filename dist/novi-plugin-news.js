@@ -203,8 +203,13 @@ module.exports =
 	        for (var _i = 0; _i < doc.body.querySelectorAll("img").length; _i++) {
 	            if (doc.body.querySelectorAll("img")[_i].getAttribute("src").length <= 0) doc.body.querySelectorAll("img")[_i].setAttribute("src", "https://images.unsplash.com/photo-1495020689067-958852a7765e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80");
 	        }
+	        doc.querySelector(".owl-carousel").setAttribute("menus", menus);
+	        doc.querySelector(".owl-carousel").setAttribute("layout", values.selectLayout.toString());
+	        doc.querySelector(".owl-carousel").setAttribute("nbr", values.items.toString());
+
 	        var content = doc.body.querySelector("section");
 	        console.log(content);
+
 	        for (var _i2 = 0; _i2 < 6; _i2++) {
 	            if (state.element.classList.contains("section")) {
 	                novi.element.insertElement(content, state.element);
@@ -260,11 +265,12 @@ module.exports =
 
 	        var _this = _possibleConstructorReturn(this, (Body.__proto__ || Object.getPrototypeOf(Body)).call(this, props));
 
-	        var items = _this.getItems(props.element).length;
 	        var selectLayout = _this.getTemplate(props.element);
 	        var menus = [];
-	        var selectMenu = null;
 	        Editor.setBodyHeight(220);
+	        var selectMenu = null;
+	        var items = null;
+	        console.log(selectMenu);
 
 	        _this.state = {
 	            items: items,
@@ -281,6 +287,9 @@ module.exports =
 	        _this._handleNumberItemChange = _this._handleNumberItemChange.bind(_this);
 	        _this.getMenu = _this.getMenu.bind(_this);
 	        _this.getTemplate = _this.getTemplate.bind(_this);
+	        _this.getPredefinedItems = _this.getPredefinedItems.bind(_this);
+	        _this.getPredefinedMenu = _this.getPredefinedMenu.bind(_this);
+	        _this.arraySearch = _this.arraySearch.bind(_this);
 	        _this.onRemove = _this.onRemove.bind(_this);
 	        _this.onSelect = _this.onSelect.bind(_this);
 
@@ -316,6 +325,8 @@ module.exports =
 	                        var menutemp = _this2.state.menus;
 	                        menutemp.push(tempdata);
 	                        _this2.setState({ menus: menutemp });
+	                        console.log("getmenuok");
+	                        console.log(menutemp);
 	                    }
 	                } catch (err) {
 	                    _didIteratorError = true;
@@ -331,7 +342,39 @@ module.exports =
 	                        }
 	                    }
 	                }
+
+	                _this2.state.selectMenu = _this2.getPredefinedMenu(_this2.state.element);
+	                _this2.state.items = _this2.getPredefinedItems(_this2.state.element);
 	            });
+	        }
+	    }, {
+	        key: 'getPredefinedItems',
+	        value: function getPredefinedItems(element) {
+	            if (element.getAttribute("nbr")) return element.getAttribute("nbr");else return this.getItems(element).length;
+	        }
+	    }, {
+	        key: 'arraySearch',
+	        value: function arraySearch(arr, val) {
+	            for (var el = 0; el < arr.length; el++) {
+	                if (arr[el].value == val) return arr[el].label;
+	            }
+	            return null;
+	        }
+	    }, {
+	        key: 'getPredefinedMenu',
+	        value: function getPredefinedMenu(element) {
+	            if (element.getAttribute("menus")) {
+	                var res = element.getAttribute("menus").split(",");
+	                console.log(res);
+	                console.log(this.state.menus);
+	                var arr = [];
+	                var ms = this.state.menus;
+	                for (var i = 0; i < res.length; i++) {
+	                    arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] });
+	                }
+	                console.log(arr);
+	                return arr;
+	            } else return null;
 	        }
 	    }, {
 	        key: 'getTemplate',
@@ -395,6 +438,7 @@ module.exports =
 	    }, {
 	        key: 'onSelect',
 	        value: function onSelect(selectedList, selectedItem) {
+	            console.log(selectedList);
 	            if (selectedList.length >= 3) Editor.setBodyHeight(240);
 	            if (selectedList.length >= 6) Editor.setBodyHeight(255);
 	            if (selectedList.length >= 8) Editor.setBodyHeight(260);
