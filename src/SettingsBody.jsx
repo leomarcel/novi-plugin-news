@@ -9,11 +9,11 @@ import Multiselect from 'multiselect-react-dropdown';
 export default class Body extends Component {
     constructor(props) {
         super(props);
-        let items = this.getItems(props.element).length;
         let selectLayout = this.getTemplate(props.element);
         let menus = [];
-        let selectMenu = null;
         Editor.setBodyHeight(220);
+        let selectMenu = null;
+        let items = null;
 
         this.state = {
             items,
@@ -30,10 +30,13 @@ export default class Body extends Component {
         this._handleNumberItemChange = this._handleNumberItemChange.bind(this);
         this.getMenu = this.getMenu.bind(this);
         this.getTemplate = this.getTemplate.bind(this);
+        this.getPredefinedItems = this.getPredefinedItems.bind(this);
+        this.getPredefinedMenu = this.getPredefinedMenu.bind(this);
+        this.arraySearch = this.arraySearch.bind(this);
         this.onRemove = this.onRemove.bind(this);
         this.onSelect = this.onSelect.bind(this);
 
-        this.messages = Language.getDataByKey("novi-plugin-news-document");
+        this.messages = Language.getDataByKey("novi-plugin-news");
 
         this.style = `
         .owl-wrap{
@@ -136,7 +139,33 @@ export default class Body extends Component {
                 menutemp.push(tempdata)
                 this.setState({ menus: menutemp });
             }
+
+            this.state.selectMenu = this.getPredefinedMenu(this.state.element);
+            this.state.items = this.getPredefinedItems(this.state.element);
         });
+    }
+
+    getPredefinedItems(element) {
+        if (element.getAttribute("nbr")) return element.getAttribute("nbr")
+        else return this.getItems(element).length;
+    }
+    arraySearch(arr, val) {
+        for (let el = 0; el < arr.length; el++) {
+            if (arr[el].value == val) return arr[el].label   
+        }
+        return null
+    }
+    getPredefinedMenu(element) {
+        if (element.getAttribute("menus")) {
+            let res = element.getAttribute("menus").split(",");
+            let arr = [];
+            let ms = this.state.menus;
+            for (let i = 0; i < res.length; i++) {
+                arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+            }
+            return arr;
+        }
+        else return null
     }
 
     getTemplate(element){
