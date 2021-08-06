@@ -11,13 +11,11 @@ export default class Body extends Component {
         super(props);
         let items = this.getItems(props.element).length;
         let selectLayout = this.getTemplate(props.element);
-        let type = null;
         let menus = [];
         let selectMenu = null;
-        Editor.setBodyHeight(210);
+        Editor.setBodyHeight(220);
 
         this.state = {
-            type,
             items,
             menus,
             selectMenu,
@@ -30,7 +28,6 @@ export default class Body extends Component {
         };
 
         this._handleNumberItemChange = this._handleNumberItemChange.bind(this);
-        this.getType = this.getType.bind(this);
         this.getMenu = this.getMenu.bind(this);
         this.getTemplate = this.getTemplate.bind(this);
         this.onRemove = this.onRemove.bind(this);
@@ -118,19 +115,15 @@ export default class Body extends Component {
             border: none;
             overflow: hidden;
         }
+        .chip{
+            font-size: inherit!important;
+            padding: 2px 5px;
+        }
         `;
     }
 
     componentDidMount() {
-        this.getType(this.state.element);
         this.getMenu();
-    }
-    
-    getType(element){
-        // console.log(element)
-        let el = element.parentElement.querySelector(".owl-carousel, .document");
-        if (el) this.state.type = el.parentElement.querySelector(".owl-carousel") ? "news" : "document";
-        console.log("plugin type : " + this.state.type)
     }
 
     getMenu(){
@@ -158,12 +151,12 @@ export default class Body extends Component {
             <div className="owl-wrap">
                 <style>{this.style}</style>
                 <p className="novi-label title_carousel" style={{ "margin": 0 }}>
-                    {this.messages.editor.settings.title}
+                {this.messages.editor.settings.title}
                 </p>
 
                 <div className="owl-switcher blockSelect">
                     <p className="novi-label" style={{ "margin": 0 }}>
-                        {this.messages.editor.settings.body.titleMenu}
+                    { this.messages.editor.settings.body.titleMenu}
                     </p>
                     <div className="owl-switcher">
                         <Multiselect
@@ -189,10 +182,16 @@ export default class Body extends Component {
     }
 
     onSelect(selectedList, selectedItem) {
+        if (selectedList.length >= 3) Editor.setBodyHeight(240);
+        if (selectedList.length >= 6) Editor.setBodyHeight(255);
+        if (selectedList.length >= 8) Editor.setBodyHeight(260);
         this.setState({ selectMenu: selectedList });
     }
 
     onRemove(selectedList, removedItem) {
+        if (selectedList.length <= 3) Editor.setBodyHeight(220);
+        if (selectedList.length <= 6) Editor.setBodyHeight(240);
+        if (selectedList.length <= 8) Editor.setBodyHeight(255);
         this.setState({ selectMenu: selectedList });
     }
 

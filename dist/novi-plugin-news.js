@@ -62,14 +62,14 @@ module.exports =
 	var Language = novi.language;
 	var Plugin = {
 	    name: "novi-plugin-news",
-	    title: "News Carousel Plugin",
-	    description: "Novi Plugin for display News",
+	    title: "Document Carousel Plugin",
+	    description: "Novi Plugin for display news",
 	    version: "1.0.2",
 	    dependencies: {
 	        novi: "0.9.0"
 	    },
 	    defaults: {
-	        querySelector: ".owl-carousel, .document",
+	        querySelector: ".document",
 	        childQuerySelector: '.owl-carousel .owl-item > *'
 	    },
 	    ui: {
@@ -154,7 +154,6 @@ module.exports =
 	    width: 350,
 	    height: 170,
 	    submitOnBlur: false
-	    // onTriggerClick: removeSlide
 	};
 
 	exports.default = SettingsItem;
@@ -173,23 +172,12 @@ module.exports =
 	    // post-carousel-variant-6
 	    // services-variant-4
 
-	    //documents
-	    //documents-variant-1
-	    //documents-variant-2
-	    //documents-variant-3
-	    //documents-variant-4
-	    //documents-variant-5
-	    //documents-variant-6
-	    //documents-variant-7
-	    //documents-variant-8
-
 	    var state = bodyStates[0];
 
 	    var values = {
 	        items: state.items,
 	        selectLayout: state.selectLayout,
-	        selectMenu: state.selectMenu,
-	        type: state.type
+	        selectMenu: state.selectMenu
 	    };
 
 	    if (values.selectMenu <= 0) return;
@@ -199,10 +187,6 @@ module.exports =
 	    for (var i = 0; i < values.selectMenu.length; i++) {
 	        menus.push(values.selectMenu[i].value);
 	    }
-
-	    //temporaire
-	    // if (values.type == "document") values.selectLayout = "post-carousel-variant-3"
-
 	    settingsReq.append('menus', menus);
 	    settingsReq.append('layout', values.selectLayout);
 	    settingsReq.append('nbr', values.items);
@@ -210,7 +194,7 @@ module.exports =
 	    console.log(values);
 	    console.log(novi.element);
 
-	    _axios2.default.post(values.type == "news" ? "/l/builder/app/php/get-posts-by-menus" : "/l/builder/app/php/get-paths-by-menus", settingsReq).then(function (res) {
+	    _axios2.default.post("/l/builder/app/php/get-posts-by-menus", settingsReq).then(function (res) {
 	        // console.log(res.data);
 	        var parser = new DOMParser();
 	        var doc = parser.parseFromString(res.data, 'text/html');
@@ -278,13 +262,11 @@ module.exports =
 
 	        var items = _this.getItems(props.element).length;
 	        var selectLayout = _this.getTemplate(props.element);
-	        var type = null;
 	        var menus = [];
 	        var selectMenu = null;
-	        Editor.setBodyHeight(210);
+	        Editor.setBodyHeight(220);
 
 	        _this.state = {
-	            type: type,
 	            items: items,
 	            menus: menus,
 	            selectMenu: selectMenu,
@@ -297,7 +279,6 @@ module.exports =
 	        };
 
 	        _this._handleNumberItemChange = _this._handleNumberItemChange.bind(_this);
-	        _this.getType = _this.getType.bind(_this);
 	        _this.getMenu = _this.getMenu.bind(_this);
 	        _this.getTemplate = _this.getTemplate.bind(_this);
 	        _this.onRemove = _this.onRemove.bind(_this);
@@ -305,23 +286,14 @@ module.exports =
 
 	        _this.messages = Language.getDataByKey("novi-plugin-news");
 
-	        _this.style = '\n        .owl-wrap{\n            padding: 0 12px;\n            display: flex;\n            flex-direction: column;\n            justify-content: center;\n            height: 100%;\n            color: #6E778A;\n        }\n        .owl-switcher{\n            display: flex;\n            flex-direction: row;\n            justify-content: space-between;\n            align-items: center;\n            margin-top: 16px;\n            -webkit-transition: 0.15s all cubic-bezier(0.4, 0, 1, 1);\n            transition: 0.15s all cubic-bezier(0.4, 0, 1, 1);\n            opacity: 1;\n            visibility: visible;\n        }\n        .owl-switcher.disabled{\n            opacity: 0;\n            visibility: hidden;\n            height: 0;\n            margin-top: 0;\n        }\n      \n        .owl-switcher .novi-input{\n            width: 55px;\n        }  \n        .owl-wrap .Select-menu-outer, .owl-wrap .Select-menu{\n            max-height: 8selectLayout5px;\n        }\n        .owl-group{\n            display: flex;\n            align-items: center;\n            justify-content: space-between;\n        }\n        .blockSelect{\n            display: block;\n        }\n        .selectTemplate{\n            width: 100%;\n        }\n        .btnSelectTemplate {\n            font-weight: 400;\n            transition: 0.33s all ease-in;\n            border: 3px;\n            letter-spacing: 0;\n            white-space: normal;\n            max-width: 100%;\n            background-color: #6E778A;\n            color: white;\n            display: inline-block;\n            border-radius: 3px;\n            padding-left: 3px;\n            padding-right: 3px;\n            font-size: 11px;\n            line-height: 24px;\n            position: relative;\n            cursor: pointer;\n        }\n        .hr_settings {\n            border: 1px solid #6E778A;\n            width: 100%;\n            margin-top: 20px;\n        }\n        .title_carousel {\n            margin: 0px;\n            color: white;\n            font-weight: 700;\n            margin-bottom: 10px;\n        }\n        .multiple_selected {\n            width: 100%;\n            color: white;\n            background-color: #282F3D;\n            border: none;\n            overflow: hidden;\n        }\n        ';
+	        _this.style = '\n        .owl-wrap{\n            padding: 0 12px;\n            display: flex;\n            flex-direction: column;\n            justify-content: center;\n            height: 100%;\n            color: #6E778A;\n        }\n        .owl-switcher{\n            display: flex;\n            flex-direction: row;\n            justify-content: space-between;\n            align-items: center;\n            margin-top: 16px;\n            -webkit-transition: 0.15s all cubic-bezier(0.4, 0, 1, 1);\n            transition: 0.15s all cubic-bezier(0.4, 0, 1, 1);\n            opacity: 1;\n            visibility: visible;\n        }\n        .owl-switcher.disabled{\n            opacity: 0;\n            visibility: hidden;\n            height: 0;\n            margin-top: 0;\n        }\n      \n        .owl-switcher .novi-input{\n            width: 55px;\n        }  \n        .owl-wrap .Select-menu-outer, .owl-wrap .Select-menu{\n            max-height: 8selectLayout5px;\n        }\n        .owl-group{\n            display: flex;\n            align-items: center;\n            justify-content: space-between;\n        }\n        .blockSelect{\n            display: block;\n        }\n        .selectTemplate{\n            width: 100%;\n        }\n        .btnSelectTemplate {\n            font-weight: 400;\n            transition: 0.33s all ease-in;\n            border: 3px;\n            letter-spacing: 0;\n            white-space: normal;\n            max-width: 100%;\n            background-color: #6E778A;\n            color: white;\n            display: inline-block;\n            border-radius: 3px;\n            padding-left: 3px;\n            padding-right: 3px;\n            font-size: 11px;\n            line-height: 24px;\n            position: relative;\n            cursor: pointer;\n        }\n        .hr_settings {\n            border: 1px solid #6E778A;\n            width: 100%;\n            margin-top: 20px;\n        }\n        .title_carousel {\n            margin: 0px;\n            color: white;\n            font-weight: 700;\n            margin-bottom: 10px;\n        }\n        .multiple_selected {\n            width: 100%;\n            color: white;\n            background-color: #282F3D;\n            border: none;\n            overflow: hidden;\n        }\n        .chip{\n            font-size: inherit!important;\n            padding: 2px 5px;\n        }\n        ';
 	        return _this;
 	    }
 
 	    _createClass(Body, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            this.getType(this.state.element);
 	            this.getMenu();
-	        }
-	    }, {
-	        key: 'getType',
-	        value: function getType(element) {
-	            // console.log(element)
-	            var el = element.parentElement.querySelector(".owl-carousel, .document");
-	            if (el) this.state.type = el.parentElement.querySelector(".owl-carousel") ? "news" : "document";
-	            console.log("plugin type : " + this.state.type);
 	        }
 	    }, {
 	        key: 'getMenu',
@@ -423,11 +395,17 @@ module.exports =
 	    }, {
 	        key: 'onSelect',
 	        value: function onSelect(selectedList, selectedItem) {
+	            if (selectedList.length >= 3) Editor.setBodyHeight(240);
+	            if (selectedList.length >= 6) Editor.setBodyHeight(255);
+	            if (selectedList.length >= 8) Editor.setBodyHeight(260);
 	            this.setState({ selectMenu: selectedList });
 	        }
 	    }, {
 	        key: 'onRemove',
 	        value: function onRemove(selectedList, removedItem) {
+	            if (selectedList.length <= 3) Editor.setBodyHeight(220);
+	            if (selectedList.length <= 6) Editor.setBodyHeight(240);
+	            if (selectedList.length <= 8) Editor.setBodyHeight(255);
 	            this.setState({ selectMenu: selectedList });
 	        }
 	    }, {

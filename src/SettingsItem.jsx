@@ -28,7 +28,7 @@ let icon = <Icon>
     </svg>
 </Icon>;
 
-const SettingsItem = {
+let SettingsItem = {
     trigger: icon,
     tooltip: messages.editor.settings.tooltip,
     title: messages.editor.settings.title,
@@ -39,7 +39,6 @@ const SettingsItem = {
     width: 350,
     height: 170,
     submitOnBlur: false,
-    // onTriggerClick: removeSlide
 };
 
 export default SettingsItem;
@@ -57,23 +56,12 @@ function onSubmitAction(headerStates, bodyStates) {
     // post-carousel-variant-6
     // services-variant-4
 
-    //documents
-    //documents-variant-1
-    //documents-variant-2
-    //documents-variant-3
-    //documents-variant-4
-    //documents-variant-5
-    //documents-variant-6
-    //documents-variant-7
-    //documents-variant-8
-
     let state = bodyStates[0];
 
     let values = {
         items: state.items,
         selectLayout: state.selectLayout,
-        selectMenu: state.selectMenu,
-        type: state.type
+        selectMenu: state.selectMenu
     };
 
     if (values.selectMenu <= 0) return;
@@ -83,10 +71,6 @@ function onSubmitAction(headerStates, bodyStates) {
     for (let i = 0; i < values.selectMenu.length; i++) {
         menus.push(values.selectMenu[i].value);
     }
-
-    //temporaire
-    // if (values.type == "document") values.selectLayout = "post-carousel-variant-3"
-
     settingsReq.append('menus', menus);
     settingsReq.append('layout', values.selectLayout);
     settingsReq.append('nbr', values.items);
@@ -94,7 +78,7 @@ function onSubmitAction(headerStates, bodyStates) {
     console.log(values)
     console.log(novi.element)
 
-    axios.post(values.type == "news" ? `/l/builder/app/php/get-posts-by-menus` : `/l/builder/app/php/get-paths-by-menus`, settingsReq)
+    axios.post(`/l/builder/app/php/get-posts-by-menus`, settingsReq)
         .then(res => {
             // console.log(res.data);
             var parser = new DOMParser();
