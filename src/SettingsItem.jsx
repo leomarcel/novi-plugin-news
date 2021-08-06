@@ -75,9 +75,6 @@ function onSubmitAction(headerStates, bodyStates) {
     settingsReq.append('layout', values.selectLayout);
     settingsReq.append('nbr', values.items);
 
-    console.log(values)
-    console.log(novi.element)
-
     axios.post(`/l/builder/app/php/get-posts-by-menus`, settingsReq)
         .then(res => {
             // console.log(res.data);

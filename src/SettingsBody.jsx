@@ -14,7 +14,6 @@ export default class Body extends Component {
         Editor.setBodyHeight(220);
         let selectMenu = null;
         let items = null;
-        console.log(selectMenu)
 
         this.state = {
             items,
@@ -138,8 +137,6 @@ export default class Body extends Component {
                     let menutemp = this.state.menus;
                     menutemp.push(tempdata)
                     this.setState({ menus: menutemp });
-                    console.log("getmenuok")
-                    console.log(menutemp)
                 }
 
                 this.state.selectMenu = this.getPredefinedMenu(this.state.element);
@@ -159,14 +156,11 @@ export default class Body extends Component {
     getPredefinedMenu(element) {
         if (element.getAttribute("menus")) {
             let res = element.getAttribute("menus").split(",");
-            console.log(res)
-            console.log(this.state.menus)
             let arr = [];
             let ms = this.state.menus;
             for (let i = 0; i < res.length; i++) {
                 arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
             }
-            console.log(arr);
             return arr;
         }
         else return null
@@ -215,7 +209,6 @@ export default class Body extends Component {
     }
 
     onSelect(selectedList, selectedItem) {
-        console.log(selectedList);
         if (selectedList.length >= 3) Editor.setBodyHeight(240);
         if (selectedList.length >= 6) Editor.setBodyHeight(255);
         if (selectedList.length >= 8) Editor.setBodyHeight(260);
