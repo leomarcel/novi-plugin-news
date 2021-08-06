@@ -191,9 +191,6 @@ module.exports =
 	    settingsReq.append('layout', values.selectLayout);
 	    settingsReq.append('nbr', values.items);
 
-	    console.log(values);
-	    console.log(novi.element);
-
 	    _axios2.default.post("/l/builder/app/php/get-posts-by-menus", settingsReq).then(function (res) {
 	        // console.log(res.data);
 	        var parser = new DOMParser();
@@ -270,7 +267,6 @@ module.exports =
 	        Editor.setBodyHeight(220);
 	        var selectMenu = null;
 	        var items = null;
-	        console.log(selectMenu);
 
 	        _this.state = {
 	            items: items,
@@ -325,8 +321,6 @@ module.exports =
 	                        var menutemp = _this2.state.menus;
 	                        menutemp.push(tempdata);
 	                        _this2.setState({ menus: menutemp });
-	                        console.log("getmenuok");
-	                        console.log(menutemp);
 	                    }
 	                } catch (err) {
 	                    _didIteratorError = true;
@@ -365,14 +359,11 @@ module.exports =
 	        value: function getPredefinedMenu(element) {
 	            if (element.getAttribute("menus")) {
 	                var res = element.getAttribute("menus").split(",");
-	                console.log(res);
-	                console.log(this.state.menus);
 	                var arr = [];
 	                var ms = this.state.menus;
 	                for (var i = 0; i < res.length; i++) {
 	                    arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] });
 	                }
-	                console.log(arr);
 	                return arr;
 	            } else return null;
 	        }
@@ -438,7 +429,6 @@ module.exports =
 	    }, {
 	        key: 'onSelect',
 	        value: function onSelect(selectedList, selectedItem) {
-	            console.log(selectedList);
 	            if (selectedList.length >= 3) Editor.setBodyHeight(240);
 	            if (selectedList.length >= 6) Editor.setBodyHeight(255);
 	            if (selectedList.length >= 8) Editor.setBodyHeight(260);
