@@ -3,11 +3,11 @@ webpack = require("webpack");
 UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
-  entry: "./src/novi-news-teams.jsx",
+  entry: "./src/novi-news-calendar.jsx",
   output: {
-    filename: "dist/novi-plugin-news-teams.js",
+    filename: "dist/novi-plugin-news-calendar.js",
     libraryTarget: 'commonjs2',
-    library: 'novi-plugin-news-teams'
+    library: 'novi-plugin-news-calendar'
   },
 
   externals: [],
