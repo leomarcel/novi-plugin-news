@@ -35,8 +35,9 @@ export default class Body extends Component {
         this.arraySearch = this.arraySearch.bind(this);
         this.onRemove = this.onRemove.bind(this);
         this.onSelect = this.onSelect.bind(this);
+        this.setEditor = this.setEditor.bind(this)
 
-        this.messages = Language.getDataByKey("novi-plugin-news");
+        this.messages = Language.getDataByKey("novi-plugin-news-document");
 
         this.style = `
         .owl-wrap{
@@ -147,7 +148,7 @@ export default class Body extends Component {
 
     getPredefinedItems(element) {
         if (element.getAttribute("nbr")) return element.getAttribute("nbr")
-        else return this.getItems(element).length;
+        else return 0;
     }
     arraySearch(arr, val) {
         for (let el = 0; el < arr.length; el++) {
@@ -170,8 +171,14 @@ export default class Body extends Component {
 
     getTemplate(element){
         for (let i = 0; i < 5; i++) {
-            if (element.getAttribute("template")) return element.getAttribute("template")
-            else element = element.parentElement
+            try {
+                if (element.getAttribute("template")) return element.getAttribute("template")
+                else element = element.parentElement
+            }
+            catch (e) {
+                console.log("err getTemplate");
+                return "template";
+            }
         }
     }
 
@@ -211,17 +218,13 @@ export default class Body extends Component {
     }
 
     onSelect(selectedList, selectedItem) {
-        if (selectedList.length >= 3) Editor.setBodyHeight(240);
-        if (selectedList.length >= 6) Editor.setBodyHeight(255);
-        if (selectedList.length >= 8) Editor.setBodyHeight(260);
         this.setState({ selectMenu: selectedList });
+        this.setEditor()
     }
 
     onRemove(selectedList, removedItem) {
-        if (selectedList.length <= 3) Editor.setBodyHeight(220);
-        if (selectedList.length <= 6) Editor.setBodyHeight(240);
-        if (selectedList.length <= 8) Editor.setBodyHeight(255);
         this.setState({ selectMenu: selectedList });
+        this.setEditor()
     }
 
     _handleNumberItemChange(value) {
@@ -230,14 +233,8 @@ export default class Body extends Component {
         });
     }
 
-    getItems(element) {
-        return [
-            novi.element.getAttribute(element, 'data-items') || null,
-            novi.element.getAttribute(element, 'data-xs-items') || null,
-            novi.element.getAttribute(element, 'data-sm-items') || null,
-            novi.element.getAttribute(element, 'data-md-items') || null,
-            novi.element.getAttribute(element, 'data-lg-items') || null,
-            novi.element.getAttribute(element, 'data-xl-items') || null,
-        ]
+    setEditor(){
+        let selectedListsLength = this.state.selectMenu ? this.state.selectMenu.length : 0
+        Editor.setBodyHeight(220 + (10 * selectedListsLength))
     }
 }
