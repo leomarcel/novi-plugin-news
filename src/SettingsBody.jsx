@@ -11,32 +11,25 @@ export default class Body extends Component {
         super(props);
         let selectLayout = this.getTemplate(props.element);
         let menus = [];
-        Editor.setBodyHeight(220);
+        Editor.setBodyHeight(125);
         let selectMenu = null;
-        let items = null;
 
         this.state = {
-            items,
             menus,
             selectMenu,
             selectLayout,
-            initValue: {
-                items
-            },
             element: props.element,
             childElement: props.childElement
         };
 
-        this._handleNumberItemChange = this._handleNumberItemChange.bind(this);
         this.getMenu = this.getMenu.bind(this);
         this.getTemplate = this.getTemplate.bind(this);
-        this.getPredefinedItems = this.getPredefinedItems.bind(this);
         this.getPredefinedMenu = this.getPredefinedMenu.bind(this);
         this.arraySearch = this.arraySearch.bind(this);
         this.onRemove = this.onRemove.bind(this);
         this.onSelect = this.onSelect.bind(this);
 
-        this.messages = Language.getDataByKey("novi-plugin-news");
+        this.messages = Language.getDataByKey("novi-plugin-news-teams");
 
         this.style = `
         .owl-wrap{
@@ -129,49 +122,54 @@ export default class Body extends Component {
         this.getMenu();
     }
 
-    getMenu(){
-        axios.get("/l/builder/app/php/get-paths-menus")
-        .then(res => {
-            const menus = res.data;
-            for (const [key, value] of Object.entries(menus)) {
-                let tempdata = { label: value, value: key }
-                let menutemp = this.state.menus;
-                menutemp.push(tempdata)
-                this.setState({ menus: menutemp });
-            }
+    getMenu() {
+        axios.get("/l/builder/app/php/get-teams-menus")
+            .then(res => {
+                const menus = res.data;
+                for (const [key, value] of Object.entries(menus)) {
+                    let tempdata = { label: value, value: key }
+                    let menutemp = this.state.menus;
+                    menutemp.push(tempdata)
+                    this.setState({ menus: menutemp });
+                }
 
-            this.state.selectMenu = this.getPredefinedMenu(this.state.element);
-            this.state.items = this.getPredefinedItems(this.state.element);
-        });
+                this.state.selectMenu = this.getPredefinedMenu(this.state.element);
+            });
     }
 
-    getPredefinedItems(element) {
-        if (element.getAttribute("nbr")) return element.getAttribute("nbr")
-        else return this.getItems(element).length;
-    }
     arraySearch(arr, val) {
         for (let el = 0; el < arr.length; el++) {
-            if (arr[el].value == val) return arr[el].label   
+            if (arr[el].value == val) return arr[el].label
         }
         return null
     }
+
     getPredefinedMenu(element) {
-        if (element.getAttribute("menus")) {
-            let res = element.getAttribute("menus").split(",");
-            let arr = [];
-            let ms = this.state.menus;
-            for (let i = 0; i < res.length; i++) {
-                arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+        for (let i = 0; i < 5; i++) {
+            if (element.getAttribute("menus")) {
+                let res = element.getAttribute("menus").split(",");
+                let arr = [];
+                let ms = this.state.menus;
+                for (let i = 0; i < res.length; i++) {
+                    arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+                }
+                return arr;
             }
-            return arr;
+            else element = element.parentElement
         }
-        else return null
+        return null;
     }
 
-    getTemplate(element){
+    getTemplate(element) {
         for (let i = 0; i < 5; i++) {
-            if (element.getAttribute("template")) return element.getAttribute("template")
-            else element = element.parentElement
+            try {
+                if (element.getAttribute("template")) return element.getAttribute("template")
+                else element = element.parentElement
+            }
+            catch (e) {
+                console.log("err getTemplate");
+                return "template";
+            }
         }
     }
 
@@ -180,12 +178,12 @@ export default class Body extends Component {
             <div className="owl-wrap">
                 <style>{this.style}</style>
                 <p className="novi-label title_carousel" style={{ "margin": 0 }}>
-                {this.messages.editor.settings.title}
+                    {this.messages.editor.settings.title}
                 </p>
 
                 <div className="owl-switcher blockSelect">
                     <p className="novi-label" style={{ "margin": 0 }}>
-                    {this.messages.editor.settings.body.titleMenu}
+                        {this.messages.editor.settings.body.titleMenu}
                     </p>
                     <div className="owl-switcher">
                         <Multiselect
@@ -197,47 +195,30 @@ export default class Body extends Component {
                         />
                     </div>
                 </div>
-
-                <div className="owl-switcher blockSelect">
-                    <p className="novi-label" style={{ "marginTop": "0" }}>
-                        {this.messages.editor.settings.body.visibleItems}
-                    </p>
-                    <div className="owl-switcher">
-                        <InputNumber min={1} max={50} value={this.state.items} onChange={this._handleNumberItemChange} />
-                    </div>
-                </div>
             </div>
         )
     }
 
     onSelect(selectedList, selectedItem) {
-        if (selectedList.length >= 3) Editor.setBodyHeight(240);
-        if (selectedList.length >= 6) Editor.setBodyHeight(255);
-        if (selectedList.length >= 8) Editor.setBodyHeight(260);
+        if (selectedList.length < 3) Editor.setBodyHeight(125);
+        if (selectedList.length >= 3) Editor.setBodyHeight(150);
+        if (selectedList.length >= 6) Editor.setBodyHeight(175);
+        if (selectedList.length >= 8) Editor.setBodyHeight(200);
+        if (selectedList.length >= 10) Editor.setBodyHeight(225);
+        if (selectedList.length >= 12) Editor.setBodyHeight(250);
+        if (selectedList.length >= 14) Editor.setBodyHeight(275);
         this.setState({ selectMenu: selectedList });
     }
 
     onRemove(selectedList, removedItem) {
-        if (selectedList.length <= 3) Editor.setBodyHeight(220);
-        if (selectedList.length <= 6) Editor.setBodyHeight(240);
-        if (selectedList.length <= 8) Editor.setBodyHeight(255);
+        if (selectedList.length < 3) Editor.setBodyHeight(125);
+        if (selectedList.length >= 3) Editor.setBodyHeight(150);
+        if (selectedList.length >= 6) Editor.setBodyHeight(175);
+        if (selectedList.length >= 8) Editor.setBodyHeight(200);
+        if (selectedList.length >= 10) Editor.setBodyHeight(225);
+        if (selectedList.length >= 12) Editor.setBodyHeight(250);
+        if (selectedList.length >= 14) Editor.setBodyHeight(275);
+
         this.setState({ selectMenu: selectedList });
-    }
-
-    _handleNumberItemChange(value) {
-        this.setState({
-            items: value
-        });
-    }
-
-    getItems(element) {
-        return [
-            novi.element.getAttribute(element, 'data-items') || null,
-            novi.element.getAttribute(element, 'data-xs-items') || null,
-            novi.element.getAttribute(element, 'data-sm-items') || null,
-            novi.element.getAttribute(element, 'data-md-items') || null,
-            novi.element.getAttribute(element, 'data-lg-items') || null,
-            novi.element.getAttribute(element, 'data-xl-items') || null,
-        ]
     }
 }

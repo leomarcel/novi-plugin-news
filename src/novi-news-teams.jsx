@@ -3,16 +3,15 @@ import SettingsItem from "./SettingsItem";
 import Settings from "./Settings";
 const Language = novi.language;
 const Plugin = {
-    name: "novi-plugin-news-document",
-    title: "News Document Carousel Plugin",
-    description: "Novi Plugin for display News Document",
+    name: "novi-plugin-news-teams",
+    title: "News Teams Carousel Plugin",
+    description: "Novi Plugin for display News Teams",
     version: "1.0.2",
     dependencies: {
         novi: "0.9.0"
     },
     defaults: {
-        querySelector: ".document",
-        childQuerySelector : '.owl-carousel .owl-item > *'
+        querySelector: ".teams"
     },
     ui: {
         editor: [SettingsItem],
@@ -21,7 +20,7 @@ const Plugin = {
     onLanguageChange : onLanguageChange
 };
 function onLanguageChange(plugin){
-    let messages = Language.getDataByKey("novi-plugin-news-document");
+    let messages = Language.getDataByKey("novi-plugin-news-teams");
     plugin.ui.editor[1].title = messages.editor.settings.title;
     plugin.ui.editor[1].tooltip = messages.editor.settings.tooltip;
     plugin.ui.editor[1].header[1] = <span>{messages.editor.settings.header}</span>;

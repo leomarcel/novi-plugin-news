@@ -1,4 +1,4 @@
-# novi-plugin-news-document
+# novi-plugin-news-teams
 Novi Builder Plugin News
 
 ## How to Compile
@@ -6,7 +6,7 @@ Novi Builder Plugin News
 
 ## How to Install
 You should follow several simple steps to install this plugin:
-* Copy the novi-plugin-news-document.js file to your path/to/novibuilder/plugins folder.
+* Copy the novi-plugin-news-teams.js file to your path/to/novibuilder/plugins folder.
 * Launch NoviBuilder 
 
 ## What you are able to do
