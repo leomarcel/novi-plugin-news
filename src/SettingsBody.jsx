@@ -170,13 +170,13 @@ export default class Body extends Component {
     }
 
     getPredefinedItems(element) {
-        if (element.getAttribute("nbr")) return element.getAttribute("nbr")
+        if (element.hasAttribute("nbr")) return element.getAttribute("nbr")
         else return 0;
     }
 
     getPredefinedClubs(element) {
         for (let i = 0; i < 5; i++) {
-            if (element.getAttribute("clubs")) {
+            if (element.hasAttribute("clubs")) {
                 let res = element.getAttribute("clubs").split(",");
                 let arr = [];
                 let ms = this.state.clubs;
@@ -191,7 +191,7 @@ export default class Body extends Component {
     }
     getPredefinedDomains(element) {
         for (let i = 0; i < 5; i++) {
-            if (element.getAttribute("domains")) {
+            if (element.hasAttribute("domains")) {
                 let res = element.getAttribute("domains").split(",");
                 let arr = [];
                 let ms = this.state.domains;
@@ -208,7 +208,7 @@ export default class Body extends Component {
     getTemplate(element) {
         for (let i = 0; i < 5; i++) {
             try {
-                if (element.getAttribute("template")) return element.getAttribute("template")
+                if (element.hasAttribute("template")) return element.getAttribute("template")
                 else element = element.parentElement
             }
             catch (e) {
