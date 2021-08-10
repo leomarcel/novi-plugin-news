@@ -1,8 +1,8 @@
 {
-  "name": "@novi_dev/novi-plugin-news-teams",
+  "name": "@novi_dev/novi-plugin-news-card",
   "version": "1.0.2",
   "description": "Novi news plugin",
-  "main": "dist/novi-plugin-news-teams.js",
+  "main": "dist/novi-plugin-news-card.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/NoviBuilder/novi-plugin-news.git"

@@ -10,13 +10,17 @@ export default class Body extends Component {
     constructor(props) {
         super(props);
         let selectLayout = this.getTemplate(props.element);
-        let menus = [];
-        Editor.setBodyHeight(125);
-        let selectMenu = null;
+        let clubs = [];
+        let domains = [];
+        Editor.setBodyHeight(210);
+        let selectClubs = null;
+        let selectDomains = null;
 
         this.state = {
-            menus,
-            selectMenu,
+            clubs,
+            domains,
+            selectClubs,
+            selectDomains,
             selectLayout,
             element: props.element,
             childElement: props.childElement
@@ -24,12 +28,16 @@ export default class Body extends Component {
 
         this.getMenu = this.getMenu.bind(this);
         this.getTemplate = this.getTemplate.bind(this);
-        this.getPredefinedMenu = this.getPredefinedMenu.bind(this);
+        this.getPredefinedClubs = this.getPredefinedClubs.bind(this);
+        this.getPredefinedDomains = this.getPredefinedDomains.bind(this);
         this.arraySearch = this.arraySearch.bind(this);
-        this.onRemove = this.onRemove.bind(this);
-        this.onSelect = this.onSelect.bind(this);
+        this.onRemoveClubs = this.onRemoveClubs.bind(this);
+        this.onSelectClubs = this.onSelectClubs.bind(this);
+        this.onRemoveDomains = this.onRemoveDomains.bind(this);
+        this.onSelectDomains = this.onSelectDomains.bind(this);
+        this.setEditor = this.setEditor.bind(this);
 
-        this.messages = Language.getDataByKey("novi-plugin-news-teams");
+        this.messages = Language.getDataByKey("novi-plugin-news-card");
 
         this.style = `
         .owl-wrap{
@@ -123,17 +131,27 @@ export default class Body extends Component {
     }
 
     getMenu() {
-        axios.get("/l/builder/app/php/get-teams-menus")
+        axios.get("/l/builder/app/php/get-assdom-menus")
             .then(res => {
-                const menus = res.data;
-                for (const [key, value] of Object.entries(menus)) {
-                    let tempdata = { label: value, value: key }
-                    let menutemp = this.state.menus;
-                    menutemp.push(tempdata)
-                    this.setState({ menus: menutemp });
+                const clubs = res.data.clubs;
+                const domains = res.data.domains;
+
+                for (const [key, value] of Object.entries(clubs)) {
+                    let data = { label: value, value: key }
+                    let clubsTemp = this.state.clubs;
+                    clubsTemp.push(data)
+                    this.setState({ clubs: clubsTemp });
+                }
+                
+                for (const [key, value] of Object.entries(domains)) {
+                    let data = { label: value, value: key }
+                    let domainsTemp = this.state.domains;
+                    domainsTemp.push(data)
+                    this.setState({ menus: domainsTemp });
                 }
 
-                this.state.selectMenu = this.getPredefinedMenu(this.state.element);
+                this.state.selectClubs = this.getPredefinedClubs(this.state.element);
+                this.state.selectDomains = this.getPredefinedDomains(this.state.element);
             });
     }
 
@@ -144,12 +162,27 @@ export default class Body extends Component {
         return null
     }
 
-    getPredefinedMenu(element) {
+    getPredefinedClubs(element) {
         for (let i = 0; i < 5; i++) {
-            if (element.getAttribute("menus")) {
-                let res = element.getAttribute("menus").split(",");
+            if (element.getAttribute("clubs")) {
+                let res = element.getAttribute("clubs").split(",");
                 let arr = [];
-                let ms = this.state.menus;
+                let ms = this.state.clubs;
+                for (let i = 0; i < res.length; i++) {
+                    arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+                }
+                return arr;
+            }
+            else element = element.parentElement
+        }
+        return null;
+    }
+    getPredefinedDomains(element) {
+        for (let i = 0; i < 5; i++) {
+            if (element.getAttribute("domains")) {
+                let res = element.getAttribute("domains").split(",");
+                let arr = [];
+                let ms = this.state.domains;
                 for (let i = 0; i < res.length; i++) {
                     arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
                 }
@@ -183,14 +216,29 @@ export default class Body extends Component {
 
                 <div className="owl-switcher blockSelect">
                     <p className="novi-label" style={{ "margin": 0 }}>
-                        {this.messages.editor.settings.body.titleMenu}
+                        {this.messages.editor.settings.body.titleClub}
                     </p>
                     <div className="owl-switcher">
                         <Multiselect
-                            options={this.state.menus}
-                            selectedValues={this.state.selectMenu}
-                            onSelect={this.onSelect}
-                            onRemove={this.onRemove}
+                            options={this.state.clubs}
+                            selectedValues={this.state.selectClubs}
+                            onSelect={this.onSelectClubs}
+                            onRemove={this.onRemoveClubs}
+                            displayValue="label"
+                        />
+                    </div>
+                </div>
+
+                <div className="owl-switcher blockSelect">
+                    <p className="novi-label" style={{ "margin": 0 }}>
+                        {this.messages.editor.settings.body.titleDomains}
+                    </p>
+                    <div className="owl-switcher">
+                        <Multiselect
+                            options={this.state.domains}
+                            selectedValues={this.state.selectDomains}
+                            onSelect={this.onSelectDomains}
+                            onRemove={this.onRemoveDomains}
                             displayValue="label"
                         />
                     </div>
@@ -199,26 +247,29 @@ export default class Body extends Component {
         )
     }
 
-    onSelect(selectedList, selectedItem) {
-        if (selectedList.length < 3) Editor.setBodyHeight(125);
-        if (selectedList.length >= 3) Editor.setBodyHeight(150);
-        if (selectedList.length >= 6) Editor.setBodyHeight(175);
-        if (selectedList.length >= 8) Editor.setBodyHeight(200);
-        if (selectedList.length >= 10) Editor.setBodyHeight(225);
-        if (selectedList.length >= 12) Editor.setBodyHeight(250);
-        if (selectedList.length >= 14) Editor.setBodyHeight(275);
-        this.setState({ selectMenu: selectedList });
+    onSelectClubs(selectedList, selectedItem) {
+        this.setState({ selectClubs: selectedList });
+        this.setEditor()
     }
 
-    onRemove(selectedList, removedItem) {
-        if (selectedList.length < 3) Editor.setBodyHeight(125);
-        if (selectedList.length >= 3) Editor.setBodyHeight(150);
-        if (selectedList.length >= 6) Editor.setBodyHeight(175);
-        if (selectedList.length >= 8) Editor.setBodyHeight(200);
-        if (selectedList.length >= 10) Editor.setBodyHeight(225);
-        if (selectedList.length >= 12) Editor.setBodyHeight(250);
-        if (selectedList.length >= 14) Editor.setBodyHeight(275);
-
-        this.setState({ selectMenu: selectedList });
+    onRemoveClubs(selectedList, removedItem) {
+        this.setState({ selectClubs: selectedList });
+        this.setEditor()
     }
+
+    onSelectDomains(selectedList, selectedItem) {       
+        this.setState({ selectDomains: selectedList });
+        this.setEditor()
+    }
+
+    onRemoveDomains(selectedList, removedItem) {
+        this.setState({ selectDomains: selectedList });
+        this.setEditor()
+    }
+
+    setEditor(){
+        let selectedListsLength = (this.state.selectClubs ? this.state.selectClubs.length : 0) + (this.state.selectDomains ? this.state.selectDomains.length : 0);
+        Editor.setBodyHeight(210 + (30 * selectedListsLength))
+    }
+
 }

@@ -2,30 +2,13 @@ import SettingsBody from "./SettingsBody";
 import axios from 'axios';
 const React = novi.react.React;
 const Icon = novi.ui.icon;
-const messages = novi.language.getDataByKey("novi-plugin-news-teams");
+const messages = novi.language.getDataByKey("novi-plugin-news-card");
 let icon = <Icon>
-    <svg viewBox="0 0 329.312 329.311" style={{ height: 20, width: 20, maxWidth: "inherit", maxHeight: "inherit" }}>
-        <path d="M275.342,199.306c-8.328,7.849-18.561,13.644-29.939,16.67c10.664,16.892,17.948,36.208,20.639,57.105
-            c0.516,4.035-0.229,7.95-1.946,11.499h58.541c1.874,0,3.705-0.858,5.008-2.348c1.249-1.418,1.844-3.23,1.622-4.96
-            C324.947,243.633,303.799,214.913,275.342,199.306z"/>
-        <path d="M207.83,176.242c2.342,1.663,4.594,3.441,6.821,5.242c2.24,1.813,4.456,3.651,6.575,5.597
-            c6.035,5.513,11.59,11.541,16.604,18.032c9.476-1.729,18.146-5.771,25.4-11.535c1.825-1.453,3.572-2.984,5.206-4.636
-            c1.531-1.549,2.948-3.206,4.294-4.912c7.722-9.812,12.369-22.139,12.369-35.56c0-31.771-25.851-57.622-57.622-57.622
-            c-6.677,0-13.066,1.198-19.035,3.302c2.084,7.341,3.272,15.057,3.272,23.059c0,19.053-6.395,36.602-17.053,50.77
-            C199.201,170.513,203.608,173.234,207.83,176.242z"/>
-        <path d="M121.58,284.581h10.761h111.902c2.925,0,5.669-1.219,7.536-3.333c1.64-1.855,2.372-4.203,2.054-6.599
-            c-2.679-20.915-10.395-40.082-21.708-56.487c-1.393-2.012-2.804-4.005-4.299-5.933c-1.718-2.198-3.543-4.3-5.387-6.39
-            c-5.296-5.969-11.108-11.438-17.396-16.327c-2.149-1.675-4.365-3.26-6.623-4.791c-2.204-1.496-4.408-2.973-6.702-4.33
-            c-1.717-1.021-3.488-1.957-5.26-2.9c-1.735,1.724-3.543,3.369-5.428,4.942c-1.58,1.309-3.243,2.51-4.918,3.711
-            c-1.658,1.188-3.375,2.3-5.123,3.362c-0.834,0.511-1.65,1.045-2.51,1.525c-0.258,0.145-0.498,0.318-0.756,0.457
-            c-12.106,6.677-25.995,10.496-40.77,10.496c-23.182,0-44.198-9.374-59.517-24.5c-35.773,19.006-61.9,54.523-67.368,97.122
-            c-0.312,2.413,0.426,4.768,2.078,6.647c1.858,2.107,4.6,3.326,7.509,3.326h105.111H121.58z"/>
-        <path d="M74.707,167.295c1.519,1.579,3.11,3.086,4.765,4.527c12.733,11.085,29.312,17.852,47.483,17.852
-            c13.823,0,26.709-3.963,37.716-10.706c1.763-1.087,3.474-2.233,5.131-3.453c1.598-1.177,3.146-2.396,4.63-3.692
-            c0.102-0.09,0.198-0.187,0.3-0.271c1.544-1.356,3.039-2.769,4.462-4.257c1.507-1.574,2.954-3.195,4.317-4.9
-            c9.932-12.403,15.913-28.1,15.913-45.195c0-6.092-0.835-11.977-2.264-17.639c-0.523-2.072-1.117-4.107-1.814-6.107
-            c-0.684-1.96-1.435-3.891-2.275-5.779c-11.331-25.271-36.674-42.943-66.116-42.943c-39.956,0-72.466,32.51-72.466,72.469
-            c0,17.09,5.978,32.786,15.907,45.189C71.755,164.1,73.2,165.721,74.707,167.295z"/>
+    <svg viewBox="0 0 368.03 388.35" style={{ height: 20, width: 20, maxWidth: "inherit", maxHeight: "inherit" }}>
+        <path d="M398.36,466.38l71.32-93.71v4.83q0,68.26,0,136.53c0,26.81-17.21,43.9-44.12,43.9-16.77,0-33.54.08-50.31-.1a9.08,9.08,0,0,1-5.8-2.26q-77.2-76.94-154.22-154.07c-.55-.55-1-1.18-1.22-1.39q41.44-41.43,82.65-82.65C320.59,372.9,361.05,417.78,398.36,466.38Z" transform="translate(-121.99 -169.6)"/>
+        <path d="M397.82,435.16c-28.39-37.44-58.05-73.11-77.86-115.43-8.81-18.84-14.31-38.51-13.91-59.57.89-46.34,38-86.72,83.06-90.26,48.3-3.79,90.34,28,99.18,74.92,4.49,23.82-.22,46.31-9.32,68.18-11,26.42-26.91,49.95-43.66,72.92-11.28,15.47-23,30.61-34.57,45.88C400,432.79,399.11,433.68,397.82,435.16Zm.33-132.87a40.84,40.84,0,1,0-41.06-40.57A40.88,40.88,0,0,0,398.15,302.29Z" transform="translate(-121.99 -169.6)"/>
+        <path d="M296.75,210.49c-2.69,8-5.81,15.72-7.81,23.67-4.67,18.57-4.27,37.32-.51,56,.59,2.92.23,5-2,7.2q-80.55,80.34-161,160.83c-.86.85-1.79,1.63-3.43,3.12v-5.49q0-101.07,0-202.14c0-25.91,17.29-43.31,43.19-43.36q63.72-.11,127.43,0C294,210.32,295.43,210.44,296.75,210.49Z" transform="translate(-121.99 -169.6)"/>
+        <path d="M198.56,414.51l143.13,143c-1.26.13-2.41.37-3.56.37q-87.44,0-174.86,0c-23.38,0-41.12-18-41.24-41.38,0-7.5-.11-15,.08-22.51a8,8,0,0,1,1.76-5.06q36.8-37.05,73.81-73.88A4.48,4.48,0,0,1,198.56,414.51Z" transform="translate(-121.99 -169.6)"/>
     </svg>
 </Icon>;
 
@@ -45,35 +28,35 @@ let SettingsItem = {
 export default SettingsItem;
 
 function onSubmitAction(headerStates, bodyStates) {
-    // team-members-variant-1
-    // team-members-variant-2
-    // team-members-variant-3
-    // team-members-variant-4
-    // team-members-variant-5
-    // team-members-variant-6
-    // team-members-variant-7
+    // card-variant-1
 
     let state = bodyStates[0];
 
     let values = {
         selectLayout: state.selectLayout,
-        selectMenu: state.selectMenu
+        selectClubs: state.selectClubs,
+        selectDomains: state.selectDomains
     };
 
-    if (values.selectMenu <= 0) return;
+    if (values.selectClubs <= 0 && values.selectDomains <= 0) return;
 
     var settingsReq = new FormData()
-    let menus = [];
-    for (let i = 0; i < values.selectMenu.length; i++) {
-        menus.push(values.selectMenu[i].value);
+
+    let clubs = [];
+    for (let i = 0; i < values.selectClubs.length; i++) {
+        clubs.push(values.selectClubs[i].value);
     }
 
+    let domains = [];
+    for (let i = 0; i < values.selectDomains.length; i++) {
+        domains.push(values.selectDomains[i].value);
+    }
 
-
-    settingsReq.append('menus', menus);
+    settingsReq.append('clubs', clubs);
+    settingsReq.append('domains', domains);
     settingsReq.append('layout', values.selectLayout);
 
-    axios.post(`/l/builder/app/php/get-teams-by-menus`, settingsReq)
+    axios.post(`/l/builder/app/php/get-assdom-by-menus`, settingsReq)
         .then(res => {
             console.log("response data")
             console.log(res.data);
@@ -85,9 +68,9 @@ function onSubmitAction(headerStates, bodyStates) {
                 if (doc.body.querySelectorAll("img")[i].getAttribute("src").length <= 0)
                     doc.body.querySelectorAll("img")[i].setAttribute("src", "https://images.unsplash.com/photo-1495020689067-958852a7765e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80");
             }
-            doc.querySelector(".teams").setAttribute("menus", menus);
-            doc.querySelector(".teams").setAttribute("layout", values.selectLayout.toString());
-            
+            doc.querySelector(".card").setAttribute("clubs", clubs);
+            doc.querySelector(".card").setAttribute("domains", domains);
+            doc.querySelector(".card").setAttribute("layout", values.selectLayout.toString());
             let content = doc.body.querySelector("section");
 
             console.log("content")
