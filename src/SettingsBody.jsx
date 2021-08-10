@@ -28,7 +28,7 @@ export default class Body extends Component {
         this.arraySearch = this.arraySearch.bind(this);
         this.onRemove = this.onRemove.bind(this);
         this.onSelect = this.onSelect.bind(this);
-
+        this.setEditor = this.setEditor.bind(this);
         this.messages = Language.getDataByKey("novi-plugin-news-teams");
 
         this.style = `
@@ -200,25 +200,17 @@ export default class Body extends Component {
     }
 
     onSelect(selectedList, selectedItem) {
-        if (selectedList.length < 3) Editor.setBodyHeight(125);
-        if (selectedList.length >= 3) Editor.setBodyHeight(150);
-        if (selectedList.length >= 6) Editor.setBodyHeight(175);
-        if (selectedList.length >= 8) Editor.setBodyHeight(200);
-        if (selectedList.length >= 10) Editor.setBodyHeight(225);
-        if (selectedList.length >= 12) Editor.setBodyHeight(250);
-        if (selectedList.length >= 14) Editor.setBodyHeight(275);
         this.setState({ selectMenu: selectedList });
+        this.setEditor()
     }
 
     onRemove(selectedList, removedItem) {
-        if (selectedList.length < 3) Editor.setBodyHeight(125);
-        if (selectedList.length >= 3) Editor.setBodyHeight(150);
-        if (selectedList.length >= 6) Editor.setBodyHeight(175);
-        if (selectedList.length >= 8) Editor.setBodyHeight(200);
-        if (selectedList.length >= 10) Editor.setBodyHeight(225);
-        if (selectedList.length >= 12) Editor.setBodyHeight(250);
-        if (selectedList.length >= 14) Editor.setBodyHeight(275);
-
         this.setState({ selectMenu: selectedList });
+        this.setEditor()
+    }
+
+    setEditor(){
+        let selectedListsLength = this.state.selectMenu ? this.state.selectMenu.length : 0
+        Editor.setBodyHeight(125 + (10 * selectedListsLength))
     }
 }
