@@ -170,39 +170,57 @@ export default class Body extends Component {
     }
 
     getPredefinedItems(element) {
-        if (element.hasAttribute("nbr")) return element.getAttribute("nbr")
-        else return 0;
+        try {
+            for (let i = 0; i < 5; i++) {
+                if (element.hasAttribute("nbr")) return element.getAttribute("nbr");
+                else element = element.parentElement
+            }
+            return 0;
+        } catch (e) {
+            return 0;
+        }
     }
 
     getPredefinedClubs(element) {
-        for (let i = 0; i < 5; i++) {
-            if (element.hasAttribute("clubs")) {
-                let res = element.getAttribute("clubs").split(",");
-                let arr = [];
-                let ms = this.state.clubs;
-                for (let i = 0; i < res.length; i++) {
-                    arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+        try {
+            for (let i = 0; i < 5; i++) {
+                if (element.hasAttribute("clubs")){
+                    let res = element.getAttribute("clubs").split(",");
+                    let arr = [];
+                    let ms = this.state.clubs;
+                    for (let i = 0; i < res.length; i++) {
+                        arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+                    }
+                    return arr;
                 }
-                return arr;
+                else element = element.parentElement
             }
-            else element = element.parentElement
+            return null;
         }
-        return null;
+        catch(e){
+            return null
+        }
     }
+
     getPredefinedDomains(element) {
-        for (let i = 0; i < 5; i++) {
-            if (element.hasAttribute("domains")) {
-                let res = element.getAttribute("domains").split(",");
-                let arr = [];
-                let ms = this.state.domains;
-                for (let i = 0; i < res.length; i++) {
-                    arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+        try {
+            for (let i = 0; i < 5; i++) {
+                if (element.hasAttribute("domains")) {
+                    let res = element.getAttribute("domains").split(",");
+                    let arr = [];
+                    let ms = this.state.domains;
+                    for (let i = 0; i < res.length; i++) {
+                        arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+                    }
+                    return arr;
                 }
-                return arr;
+                else element = element.parentElement
             }
-            else element = element.parentElement
+            return null;
         }
-        return null;
+        catch(e){
+            return null
+        }
     }
 
     getTemplate(element) {
@@ -213,7 +231,7 @@ export default class Body extends Component {
             }
             catch (e) {
                 console.log("err getTemplate");
-                return "template";
+                return "calendar-variant-1";
             }
         }
     }
@@ -270,27 +288,23 @@ export default class Body extends Component {
     }
 
     onSelectClubs(selectedList, selectedItem) {
-        this.setEditor()
-
         this.setState({ selectClubs: selectedList });
+        this.setEditor()
     }
 
     onRemoveClubs(selectedList, removedItem) {
-        this.setEditor()
-
         this.setState({ selectClubs: selectedList });
+        this.setEditor()
     }
 
     onSelectDomains(selectedList, selectedItem) {       
-        this.setEditor()
-
         this.setState({ selectDomains: selectedList });
+        this.setEditor()
     }
 
     onRemoveDomains(selectedList, removedItem) {
-        this.setEditor()
-
         this.setState({ selectDomains: selectedList });
+        this.setEditor()
     }
 
     setEditor(){
