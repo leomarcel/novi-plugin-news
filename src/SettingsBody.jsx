@@ -145,19 +145,23 @@ export default class Body extends Component {
     }
 
     getPredefinedMenu(element) {
-        for (let i = 0; i < 5; i++) {
-            if (element.getAttribute("menus")) {
-                let res = element.getAttribute("menus").split(",");
-                let arr = [];
-                let ms = this.state.menus;
-                for (let i = 0; i < res.length; i++) {
-                    arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+        try {
+            for (let i = 0; i < 5; i++) {
+                if (element.getAttribute("menus")) {
+                    let res = element.getAttribute("menus").split(",");
+                    let arr = [];
+                    let ms = this.state.menus;
+                    for (let i = 0; i < res.length; i++) {
+                        arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+                    }
+                    return arr;
                 }
-                return arr;
+                else element = element.parentElement
             }
-            else element = element.parentElement
+            return null;
+        } catch (e) {
+            return null;
         }
-        return null;
     }
 
     getTemplate(element) {
@@ -168,7 +172,7 @@ export default class Body extends Component {
             }
             catch (e) {
                 console.log("err getTemplate");
-                return "template";
+                return "team-members-variant-1";
             }
         }
     }

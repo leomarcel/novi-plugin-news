@@ -68,34 +68,23 @@ function onSubmitAction(headerStates, bodyStates) {
         menus.push(values.selectMenu[i].value);
     }
 
-
-
     settingsReq.append('menus', menus);
     settingsReq.append('layout', values.selectLayout);
 
     axios.post(`/l/builder/app/php/get-teams-by-menus`, settingsReq)
         .then(res => {
-            console.log("response data")
-            console.log(res.data);
+            // console.log(res.data);
             var parser = new DOMParser();
             var doc = parser.parseFromString(res.data, 'text/html');
 
-            //si pas d'image par default
-            for (let i = 0; i < doc.body.querySelectorAll("img").length; i++) {
-                if (doc.body.querySelectorAll("img")[i].getAttribute("src").length <= 0)
-                    doc.body.querySelectorAll("img")[i].setAttribute("src", "https://images.unsplash.com/photo-1495020689067-958852a7765e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80");
-            }
             doc.querySelector(".teams").setAttribute("menus", menus);
             doc.querySelector(".teams").setAttribute("layout", values.selectLayout.toString());
-            
-            let content = doc.body.querySelector("section");
 
-            console.log("content")
-            console.log(content);
+            console.log(doc.body.querySelector("section"));
 
             for (let i = 0; i < 6; i++) {
                 if (state.element.classList.contains("section")) {
-                    novi.element.insertElement(content, state.element)
+                    novi.element.insertElement(doc.body.querySelector("section"), state.element)
                     novi.element.remove(state.element);
                     novi.page.forceUpdate();
                     return;
