@@ -163,45 +163,54 @@ export default class Body extends Component {
     }
 
     getPredefinedClubs(element) {
-        for (let i = 0; i < 5; i++) {
-            if (element.getAttribute("clubs")) {
-                let res = element.getAttribute("clubs").split(",");
-                let arr = [];
-                let ms = this.state.clubs;
-                for (let i = 0; i < res.length; i++) {
-                    arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+        try {
+            for (let i = 0; i < 5; i++) {
+                if (element.hasAttribute("clubs")) {
+                    let res = element.getAttribute("clubs").split(",");
+                    let arr = [];
+                    let ms = this.state.clubs;
+                    for (let i = 0; i < res.length; i++) {
+                        arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+                    }
+                    return arr;
                 }
-                return arr;
+                else element = element.parentElement
             }
-            else element = element.parentElement
+            return null;
+        } catch (e) {
+            return null
         }
-        return null;
     }
     getPredefinedDomains(element) {
-        for (let i = 0; i < 5; i++) {
-            if (element.getAttribute("domains")) {
-                let res = element.getAttribute("domains").split(",");
-                let arr = [];
-                let ms = this.state.domains;
-                for (let i = 0; i < res.length; i++) {
-                    arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+        try {
+            element = element.querySelector(".card");
+            for (let i = 0; i < 5; i++) {
+                if (element.hasAttribute("domains")) {
+                    let res = element.getAttribute("domains").split(",");
+                    let arr = [];
+                    let ms = this.state.domains;
+                    for (let i = 0; i < res.length; i++) {
+                        arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+                    }
+                    return arr;
                 }
-                return arr;
+                else element = element.parentElement
             }
-            else element = element.parentElement
+            return null;
+        } catch (e) {
+            return null
         }
-        return null;
     }
 
     getTemplate(element) {
         for (let i = 0; i < 5; i++) {
             try {
-                if (element.getAttribute("template")) return element.getAttribute("template")
+                if (element.hasAttribute("template")) return element.getAttribute("template")
                 else element = element.parentElement
             }
             catch (e) {
                 console.log("err getTemplate");
-                return "template";
+                return "card-variant-1";
             }
         }
     }
