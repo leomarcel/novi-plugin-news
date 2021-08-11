@@ -130,46 +130,63 @@ export default class Body extends Component {
         this.getMenu();
     }
 
-    getMenu(){
+    getMenu() {
         axios.get("/l/builder/app/php/get-paths-menus")
-        .then(res => {
-            const menus = res.data;
-            for (const [key, value] of Object.entries(menus)) {
-                let tempdata = { label: value, value: key }
-                let menutemp = this.state.menus;
-                menutemp.push(tempdata)
-                this.setState({ menus: menutemp });
-            }
+            .then(res => {
+                const menus = res.data;
+                for (const [key, value] of Object.entries(menus)) {
+                    let tempdata = { label: value, value: key }
+                    let menutemp = this.state.menus;
+                    menutemp.push(tempdata)
+                    this.setState({ menus: menutemp });
+                }
 
-            this.state.selectMenu = this.getPredefinedMenu(this.state.element);
-            this.state.items = this.getPredefinedItems(this.state.element);
-        });
+                this.state.selectMenu = this.getPredefinedMenu(this.state.element);
+                this.state.items = this.getPredefinedItems(this.state.element);
+            });
     }
 
     getPredefinedItems(element) {
-        if (element.getAttribute("nbr")) return element.getAttribute("nbr")
-        else return 0;
+        try {
+            for (let i = 0; i < 5; i++) {
+                if (element.hasAttribute("nbr")) return element.getAttribute("nbr");
+                else element = element.parentElement
+            }
+            return 0;
+        } catch (e) {
+            return 0;
+        }
     }
+
     arraySearch(arr, val) {
         for (let el = 0; el < arr.length; el++) {
-            if (arr[el].value == val) return arr[el].label   
+            if (arr[el].value == val) return arr[el].label
         }
         return null
     }
+    
     getPredefinedMenu(element) {
-        if (element.getAttribute("menus")) {
-            let res = element.getAttribute("menus").split(",");
-            let arr = [];
-            let ms = this.state.menus;
-            for (let i = 0; i < res.length; i++) {
-                arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+        try {
+            for (let i = 0; i < 5; i++) {
+                if (element.getAttribute("menus")) {
+                    let res = element.getAttribute("menus").split(",");
+                    let arr = [];
+                    let ms = this.state.menus;
+                    for (let i = 0; i < res.length; i++) {
+                        arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+                    }
+                    return arr;
+                }
+                else element = element.parentElement
             }
-            return arr;
+            return null;
+        } catch (e) {
+            return null;
         }
-        else return null
     }
 
-    getTemplate(element){
+
+    getTemplate(element) {
         for (let i = 0; i < 5; i++) {
             try {
                 if (element.getAttribute("template")) return element.getAttribute("template")
@@ -177,7 +194,7 @@ export default class Body extends Component {
             }
             catch (e) {
                 console.log("err getTemplate");
-                return "template";
+                return "documents";
             }
         }
     }
@@ -187,12 +204,12 @@ export default class Body extends Component {
             <div className="owl-wrap">
                 <style>{this.style}</style>
                 <p className="novi-label title_carousel" style={{ "margin": 0 }}>
-                {this.messages.editor.settings.title}
+                    {this.messages.editor.settings.title}
                 </p>
 
                 <div className="owl-switcher blockSelect">
                     <p className="novi-label" style={{ "margin": 0 }}>
-                    {this.messages.editor.settings.body.titleMenu}
+                        {this.messages.editor.settings.body.titleMenu}
                     </p>
                     <div className="owl-switcher">
                         <Multiselect
@@ -233,7 +250,7 @@ export default class Body extends Component {
         });
     }
 
-    setEditor(){
+    setEditor() {
         let selectedListsLength = this.state.selectMenu ? this.state.selectMenu.length : 0
         Editor.setBodyHeight(220 + (10 * selectedListsLength))
     }
