@@ -15,9 +15,15 @@ export default class Body extends Component {
         let selectMenu = null;
         let items = null;
 
+        this.messages = Language.getDataByKey("novi-plugin-news-document");
+        let placeholder = this.messages.editor.settings.body.placeholder;
+        let group = null;
+
         this.state = {
             items,
             menus,
+            group,
+            placeholder,
             selectMenu,
             selectLayout,
             initValue: {
@@ -35,9 +41,8 @@ export default class Body extends Component {
         this.arraySearch = this.arraySearch.bind(this);
         this.onRemove = this.onRemove.bind(this);
         this.onSelect = this.onSelect.bind(this);
-        this.setEditor = this.setEditor.bind(this)
-
-        this.messages = Language.getDataByKey("novi-plugin-news-document");
+        this.setEditor = this.setEditor.bind(this);
+        this.getArrMenu = this.getArrMenu.bind(this);
 
         this.style = `
         .owl-wrap{
@@ -133,28 +138,43 @@ export default class Body extends Component {
     getMenu() {
         axios.get("/l/builder/app/php/get-paths-menus")
             .then(res => {
-                const menus = res.data;
-                for (const [key, value] of Object.entries(menus)) {
-                    let tempdata = { label: value, value: key }
-                    let menutemp = this.state.menus;
-                    menutemp.push(tempdata)
-                    this.setState({ menus: menutemp });
-                }
+                let response = this.getArrMenu(res.data);
+                this.setState({ menus: response });
 
                 this.state.selectMenu = this.getPredefinedMenu(this.state.element);
                 this.state.items = this.getPredefinedItems(this.state.element);
             });
     }
 
+    getArrMenu(res) {
+        let response = [];
+        for (const [i, j] of Object.entries(res)) {
+            response.push({ label: j, value: i });
+        }
+
+        if (typeof response[0].label === "object") {
+            let temps = [];
+            for (let i = 0; i < response.length; i++) {
+                for (const [key, label] of Object.entries(response[i].label)) {
+                    temps.push({ group: response[i].value, label: label, value: key });
+                }
+            }
+            this.state.group = "group";
+            response = temps;
+        }
+        return response;
+    }
+
+
     getPredefinedItems(element) {
         try {
             for (let i = 0; i < 5; i++) {
-                if (element.hasAttribute("nbr")) return element.getAttribute("nbr");
+                if (element.getAttribute("nbr")) return element.getAttribute("nbr");
                 else element = element.parentElement
             }
-            return 0;
+            return 10;
         } catch (e) {
-            return 0;
+            return 10;
         }
     }
 
@@ -175,6 +195,7 @@ export default class Body extends Component {
                     for (let i = 0; i < res.length; i++) {
                         arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
                     }
+                    this.state.placeholder = "";
                     return arr;
                 }
                 else element = element.parentElement
@@ -218,6 +239,8 @@ export default class Body extends Component {
                             onSelect={this.onSelect}
                             onRemove={this.onRemove}
                             displayValue="label"
+                            placeholder= {this.state.placeholder}
+                            groupBy={this.state.group}
                         />
                     </div>
                 </div>
@@ -235,11 +258,13 @@ export default class Body extends Component {
     }
 
     onSelect(selectedList, selectedItem) {
+        this.state.placeholder = selectedList.length == 0 ? this.messages.editor.settings.body.placeholder : "";
         this.setState({ selectMenu: selectedList });
         this.setEditor()
     }
 
     onRemove(selectedList, removedItem) {
+        this.state.placeholder = selectedList.length == 0 ? this.messages.editor.settings.body.placeholder : "";
         this.setState({ selectMenu: selectedList });
         this.setEditor()
     }
@@ -252,6 +277,6 @@ export default class Body extends Component {
 
     setEditor() {
         let selectedListsLength = this.state.selectMenu ? this.state.selectMenu.length : 0
-        Editor.setBodyHeight(220 + (10 * selectedListsLength))
+        Editor.setBodyHeight(220 + (13 * selectedListsLength))
     }
 }
