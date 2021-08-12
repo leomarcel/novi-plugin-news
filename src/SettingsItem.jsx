@@ -56,7 +56,7 @@ function onSubmitAction(headerStates, bodyStates) {
     settingsReq.append('domains', domains);
     settingsReq.append('layout', values.selectLayout);
 
-    axios.post(`/l/builder/app/php/get-assdom-by-menus`, settingsReq)
+    axios.post(`/l/builder/app/php/get-gmap-by-menus`, settingsReq)
         .then(res => {
             // console.log(res.data);
             var parser = new DOMParser();

@@ -16,9 +16,19 @@ export default class Body extends Component {
         let selectClubs = null;
         let selectDomains = null;
 
+        this.messages = Language.getDataByKey("novi-plugin-news-card");
+        let placeholder = this.messages.editor.settings.body.placeholder;
+        let placeholders = this.messages.editor.settings.body.placeholder;
+        let groupClubs = null;
+        let groupDomains = null;
+
         this.state = {
             clubs,
             domains,
+            placeholder,
+            placeholders,
+            groupClubs,
+            groupDomains,
             selectClubs,
             selectDomains,
             selectLayout,
@@ -36,8 +46,7 @@ export default class Body extends Component {
         this.onRemoveDomains = this.onRemoveDomains.bind(this);
         this.onSelectDomains = this.onSelectDomains.bind(this);
         this.setEditor = this.setEditor.bind(this);
-
-        this.messages = Language.getDataByKey("novi-plugin-news-card");
+        this.getArrMenu = this.getArrMenu.bind(this);
 
         this.style = `
         .owl-wrap{
@@ -131,28 +140,46 @@ export default class Body extends Component {
     }
 
     getMenu() {
-        axios.get("/l/builder/app/php/get-assdom-menus")
+        axios.get("/l/builder/app/php/get-gmap-menus")
             .then(res => {
-                const clubs = res.data.clubs;
-                const domains = res.data.domains;
-
-                for (const [key, value] of Object.entries(clubs)) {
-                    let data = { label: value, value: key }
-                    let clubsTemp = this.state.clubs;
-                    clubsTemp.push(data)
-                    this.setState({ clubs: clubsTemp });
+                try {
+                    let response = this.getArrMenu(res.data.clubs);
+                    this.setState({ clubs: response });
+                } catch (error) {
+                    console.log("no data clubs")
                 }
-                
-                for (const [key, value] of Object.entries(domains)) {
-                    let data = { label: value, value: key }
-                    let domainsTemp = this.state.domains;
-                    domainsTemp.push(data)
-                    this.setState({ menus: domainsTemp });
+
+                try {
+                    let response = this.getArrMenu(res.data.domains);
+                    this.setState({ domains: response });
+                } catch (error) {
+                    console.log("no data domains")
                 }
 
                 this.state.selectClubs = this.getPredefinedClubs(this.state.element);
                 this.state.selectDomains = this.getPredefinedDomains(this.state.element);
             });
+    }
+
+    getArrMenu(res) {
+        let response = [];
+        for (const [i, j] of Object.entries(res)) {
+            response.push({ label: j, value: i });
+        }
+
+        if (typeof response[0].label === "object") {
+            let temps = [];
+            for (let i = 0; i < response.length; i++) {
+                for (const [key, label] of Object.entries(response[i].label)) {
+                    temps.push({ group: response[i].value, label: label, value: key });
+                }
+            }
+            this.state.groupClubs = type === "clubs" ? "group" : null;
+            this.state.groupDomains = type === "domains" ? "group" : null;
+
+            response = temps;
+        }
+        return response;
     }
 
     arraySearch(arr, val) {
@@ -234,6 +261,8 @@ export default class Body extends Component {
                             onSelect={this.onSelectClubs}
                             onRemove={this.onRemoveClubs}
                             displayValue="label"
+                            placeholder= {this.state.placeholder}
+                            groupBy={this.state.groupClubs}
                         />
                     </div>
                 </div>
@@ -249,6 +278,8 @@ export default class Body extends Component {
                             onSelect={this.onSelectDomains}
                             onRemove={this.onRemoveDomains}
                             displayValue="label"
+                            placeholder= {this.state.placeholders}
+                            groupBy={this.state.groupDomains}
                         />
                     </div>
                 </div>
@@ -257,21 +288,25 @@ export default class Body extends Component {
     }
 
     onSelectClubs(selectedList, selectedItem) {
+        this.state.placeholder = selectedList.length == 0 ? this.messages.editor.settings.body.placeholder : "";
         this.setState({ selectClubs: selectedList });
         this.setEditor()
     }
 
     onRemoveClubs(selectedList, removedItem) {
+        this.state.placeholder = selectedList.length == 0 ? this.messages.editor.settings.body.placeholder : "";
         this.setState({ selectClubs: selectedList });
         this.setEditor()
     }
 
-    onSelectDomains(selectedList, selectedItem) {       
+    onSelectDomains(selectedList, selectedItem) {     
+        this.state.placeholders = selectedList.length == 0 ? this.messages.editor.settings.body.placeholder : "";  
         this.setState({ selectDomains: selectedList });
         this.setEditor()
     }
 
     onRemoveDomains(selectedList, removedItem) {
+        this.state.placeholders = selectedList.length == 0 ? this.messages.editor.settings.body.placeholder : "";
         this.setState({ selectDomains: selectedList });
         this.setEditor()
     }
