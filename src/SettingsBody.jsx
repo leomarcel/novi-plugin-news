@@ -35,6 +35,7 @@ export default class Body extends Component {
         this.arraySearch = this.arraySearch.bind(this);
         this.onRemove = this.onRemove.bind(this);
         this.onSelect = this.onSelect.bind(this);
+        this.setEditor = this.setEditor.bind(this)
 
         this.messages = Language.getDataByKey("novi-plugin-news");
 
@@ -128,10 +129,12 @@ export default class Body extends Component {
     componentDidMount() {
         this.getMenu();
     }
+
     getMenu() {
         axios.get("/l/builder/app/php/get-posts-menus")
             .then(res => {
                 const menus = res.data;
+
                 for (const [key, value] of Object.entries(menus)) {
                     let tempdata = { label: value, value: key }
                     let menutemp = this.state.menus;
@@ -143,27 +146,44 @@ export default class Body extends Component {
                 this.state.items = this.getPredefinedItems(this.state.element);
             });
     }
+
     getPredefinedItems(element) {
-        if (element.getAttribute("nbr")) return element.getAttribute("nbr")
-        else return this.getItems(element).length;
+        try {
+            for (let i = 0; i < 5; i++) {
+                if (element.hasAttribute("nbr")) return element.getAttribute("nbr");
+                else element = element.parentElement
+            }
+            return 0;
+        } catch (e) {
+            return 0;
+        }
     }
+
     arraySearch(arr, val) {
         for (let el = 0; el < arr.length; el++) {
             if (arr[el].value == val) return arr[el].label   
         }
         return null
     }
+
     getPredefinedMenu(element) {
-        if (element.getAttribute("menus")) {
-            let res = element.getAttribute("menus").split(",");
-            let arr = [];
-            let ms = this.state.menus;
-            for (let i = 0; i < res.length; i++) {
-                arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+        try {
+            for (let i = 0; i < 5; i++) {
+                if (element.getAttribute("menus")) {
+                    let res = element.getAttribute("menus").split(",");
+                    let arr = [];
+                    let ms = this.state.menus;
+                    for (let i = 0; i < res.length; i++) {
+                        arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+                    }
+                    return arr;
+                }
+                else element = element.parentElement
             }
-            return arr;
+            return null;
+        } catch (e) {
+            return null;
         }
-        else return null
     }
 
     getTemplate(element) {
@@ -209,17 +229,13 @@ export default class Body extends Component {
     }
 
     onSelect(selectedList, selectedItem) {
-        if (selectedList.length >= 3) Editor.setBodyHeight(240);
-        if (selectedList.length >= 6) Editor.setBodyHeight(255);
-        if (selectedList.length >= 8) Editor.setBodyHeight(260);
         this.setState({ selectMenu: selectedList });
+        this.setEditor()
     }
 
     onRemove(selectedList, removedItem) {
-        if (selectedList.length <= 3) Editor.setBodyHeight(220);
-        if (selectedList.length <= 6) Editor.setBodyHeight(240);
-        if (selectedList.length <= 8) Editor.setBodyHeight(255);
         this.setState({ selectMenu: selectedList });
+        this.setEditor()
     }
 
     _handleNumberItemChange(value) {
@@ -228,14 +244,8 @@ export default class Body extends Component {
         });
     }
 
-    getItems(element) {
-        return [
-            novi.element.getAttribute(element, 'data-items') || null,
-            novi.element.getAttribute(element, 'data-xs-items') || null,
-            novi.element.getAttribute(element, 'data-sm-items') || null,
-            novi.element.getAttribute(element, 'data-md-items') || null,
-            novi.element.getAttribute(element, 'data-lg-items') || null,
-            novi.element.getAttribute(element, 'data-xl-items') || null,
-        ]
+    setEditor(){
+        let selectedListsLength = (this.state.selectMenu ? this.state.selectMenu.length : 0);
+        Editor.setBodyHeight(210 + (12 * selectedListsLength))
     }
 }

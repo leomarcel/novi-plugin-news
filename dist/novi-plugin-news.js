@@ -62,15 +62,14 @@ module.exports =
 	var Language = novi.language;
 	var Plugin = {
 	    name: "novi-plugin-news",
-	    title: "Document Carousel Plugin",
+	    title: "News Carousel Plugin",
 	    description: "Novi Plugin for display news",
 	    version: "1.0.2",
 	    dependencies: {
 	        novi: "0.9.0"
 	    },
 	    defaults: {
-	        querySelector: ".document",
-	        childQuerySelector: '.owl-carousel .owl-item > *'
+	        querySelector: ".news"
 	    },
 	    ui: {
 	        editor: [_SettingsItem2.default],
@@ -200,9 +199,9 @@ module.exports =
 	        for (var _i = 0; _i < doc.body.querySelectorAll("img").length; _i++) {
 	            if (doc.body.querySelectorAll("img")[_i].getAttribute("src").length <= 0) doc.body.querySelectorAll("img")[_i].setAttribute("src", "https://images.unsplash.com/photo-1495020689067-958852a7765e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80");
 	        }
-	        doc.querySelector(".owl-carousel").setAttribute("menus", menus);
-	        doc.querySelector(".owl-carousel").setAttribute("layout", values.selectLayout.toString());
-	        doc.querySelector(".owl-carousel").setAttribute("nbr", values.items.toString());
+	        doc.querySelector(".news").setAttribute("menus", menus);
+	        doc.querySelector(".news").setAttribute("layout", values.selectLayout.toString());
+	        doc.querySelector(".news").setAttribute("nbr", values.items.toString());
 
 	        var content = doc.body.querySelector("section");
 	        console.log(content);
@@ -288,6 +287,7 @@ module.exports =
 	        _this.arraySearch = _this.arraySearch.bind(_this);
 	        _this.onRemove = _this.onRemove.bind(_this);
 	        _this.onSelect = _this.onSelect.bind(_this);
+	        _this.setEditor = _this.setEditor.bind(_this);
 
 	        _this.messages = Language.getDataByKey("novi-plugin-news");
 
@@ -307,6 +307,7 @@ module.exports =
 
 	            _axios2.default.get("/l/builder/app/php/get-posts-menus").then(function (res) {
 	                var menus = res.data;
+
 	                var _iteratorNormalCompletion = true;
 	                var _didIteratorError = false;
 	                var _iteratorError = undefined;
@@ -344,7 +345,14 @@ module.exports =
 	    }, {
 	        key: 'getPredefinedItems',
 	        value: function getPredefinedItems(element) {
-	            if (element.getAttribute("nbr")) return element.getAttribute("nbr");else return this.getItems(element).length;
+	            try {
+	                for (var i = 0; i < 5; i++) {
+	                    if (element.hasAttribute("nbr")) return element.getAttribute("nbr");else element = element.parentElement;
+	                }
+	                return 0;
+	            } catch (e) {
+	                return 0;
+	            }
 	        }
 	    }, {
 	        key: 'arraySearch',
@@ -357,15 +365,22 @@ module.exports =
 	    }, {
 	        key: 'getPredefinedMenu',
 	        value: function getPredefinedMenu(element) {
-	            if (element.getAttribute("menus")) {
-	                var res = element.getAttribute("menus").split(",");
-	                var arr = [];
-	                var ms = this.state.menus;
-	                for (var i = 0; i < res.length; i++) {
-	                    arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] });
+	            try {
+	                for (var i = 0; i < 5; i++) {
+	                    if (element.getAttribute("menus")) {
+	                        var res = element.getAttribute("menus").split(",");
+	                        var arr = [];
+	                        var ms = this.state.menus;
+	                        for (var _i = 0; _i < res.length; _i++) {
+	                            arr.push({ label: this.arraySearch(ms, res[_i]), value: res[_i] });
+	                        }
+	                        return arr;
+	                    } else element = element.parentElement;
 	                }
-	                return arr;
-	            } else return null;
+	                return null;
+	            } catch (e) {
+	                return null;
+	            }
 	        }
 	    }, {
 	        key: 'getTemplate',
@@ -429,18 +444,14 @@ module.exports =
 	    }, {
 	        key: 'onSelect',
 	        value: function onSelect(selectedList, selectedItem) {
-	            if (selectedList.length >= 3) Editor.setBodyHeight(240);
-	            if (selectedList.length >= 6) Editor.setBodyHeight(255);
-	            if (selectedList.length >= 8) Editor.setBodyHeight(260);
 	            this.setState({ selectMenu: selectedList });
+	            this.setEditor();
 	        }
 	    }, {
 	        key: 'onRemove',
 	        value: function onRemove(selectedList, removedItem) {
-	            if (selectedList.length <= 3) Editor.setBodyHeight(220);
-	            if (selectedList.length <= 6) Editor.setBodyHeight(240);
-	            if (selectedList.length <= 8) Editor.setBodyHeight(255);
 	            this.setState({ selectMenu: selectedList });
+	            this.setEditor();
 	        }
 	    }, {
 	        key: '_handleNumberItemChange',
@@ -450,9 +461,10 @@ module.exports =
 	            });
 	        }
 	    }, {
-	        key: 'getItems',
-	        value: function getItems(element) {
-	            return [novi.element.getAttribute(element, 'data-items') || null, novi.element.getAttribute(element, 'data-xs-items') || null, novi.element.getAttribute(element, 'data-sm-items') || null, novi.element.getAttribute(element, 'data-md-items') || null, novi.element.getAttribute(element, 'data-lg-items') || null, novi.element.getAttribute(element, 'data-xl-items') || null];
+	        key: 'setEditor',
+	        value: function setEditor() {
+	            var selectedListsLength = this.state.selectMenu ? this.state.selectMenu.length : 0;
+	            Editor.setBodyHeight(210 + 12 * selectedListsLength);
 	        }
 	    }]);
 

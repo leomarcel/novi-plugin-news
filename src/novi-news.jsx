@@ -4,15 +4,14 @@ import Settings from "./Settings";
 const Language = novi.language;
 const Plugin = {
     name: "novi-plugin-news",
-    title: "Document Carousel Plugin",
+    title: "News Carousel Plugin",
     description: "Novi Plugin for display news",
     version: "1.0.2",
     dependencies: {
         novi: "0.9.0"
     },
     defaults: {
-        querySelector: ".document",
-        childQuerySelector : '.owl-carousel .owl-item > *'
+        querySelector: ".news"
     },
     ui: {
         editor: [SettingsItem],
