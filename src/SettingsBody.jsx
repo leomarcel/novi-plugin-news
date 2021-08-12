@@ -13,7 +13,7 @@ export default class Body extends Component {
         let menus = [];
         Editor.setBodyHeight(220);
         let selectMenu = null;
-        let items = null;
+        let items = 10;
 
         this.state = {
             items,
@@ -153,9 +153,9 @@ export default class Body extends Component {
                 if (element.hasAttribute("nbr")) return element.getAttribute("nbr");
                 else element = element.parentElement
             }
-            return 0;
+            return 10;
         } catch (e) {
-            return 0;
+            return 10;
         }
     }
 
