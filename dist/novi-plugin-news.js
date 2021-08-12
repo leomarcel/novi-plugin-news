@@ -229,6 +229,8 @@ module.exports =
 
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _axios = __webpack_require__(3);
@@ -265,11 +267,17 @@ module.exports =
 	        var menus = [];
 	        Editor.setBodyHeight(220);
 	        var selectMenu = null;
-	        var items = null;
+	        var items = 10;
+
+	        _this.messages = Language.getDataByKey("novi-plugin-news");
+	        var placeholder = _this.messages.editor.settings.body.placeholder;
+	        var group = null;
 
 	        _this.state = {
 	            items: items,
 	            menus: menus,
+	            group: group,
+	            placeholder: placeholder,
 	            selectMenu: selectMenu,
 	            selectLayout: selectLayout,
 	            initValue: {
@@ -288,8 +296,7 @@ module.exports =
 	        _this.onRemove = _this.onRemove.bind(_this);
 	        _this.onSelect = _this.onSelect.bind(_this);
 	        _this.setEditor = _this.setEditor.bind(_this);
-
-	        _this.messages = Language.getDataByKey("novi-plugin-news");
+	        _this.getArrMenu = _this.getArrMenu.bind(_this);
 
 	        _this.style = '\n        .owl-wrap{\n            padding: 0 12px;\n            display: flex;\n            flex-direction: column;\n            justify-content: center;\n            height: 100%;\n            color: #6E778A;\n        }\n        .owl-switcher{\n            display: flex;\n            flex-direction: row;\n            justify-content: space-between;\n            align-items: center;\n            margin-top: 16px;\n            -webkit-transition: 0.15s all cubic-bezier(0.4, 0, 1, 1);\n            transition: 0.15s all cubic-bezier(0.4, 0, 1, 1);\n            opacity: 1;\n            visibility: visible;\n        }\n        .owl-switcher.disabled{\n            opacity: 0;\n            visibility: hidden;\n            height: 0;\n            margin-top: 0;\n        }\n      \n        .owl-switcher .novi-input{\n            width: 55px;\n        }  \n        .owl-wrap .Select-menu-outer, .owl-wrap .Select-menu{\n            max-height: 8selectLayout5px;\n        }\n        .owl-group{\n            display: flex;\n            align-items: center;\n            justify-content: space-between;\n        }\n        .blockSelect{\n            display: block;\n        }\n        .selectTemplate{\n            width: 100%;\n        }\n        .btnSelectTemplate {\n            font-weight: 400;\n            transition: 0.33s all ease-in;\n            border: 3px;\n            letter-spacing: 0;\n            white-space: normal;\n            max-width: 100%;\n            background-color: #6E778A;\n            color: white;\n            display: inline-block;\n            border-radius: 3px;\n            padding-left: 3px;\n            padding-right: 3px;\n            font-size: 11px;\n            line-height: 24px;\n            position: relative;\n            cursor: pointer;\n        }\n        .hr_settings {\n            border: 1px solid #6E778A;\n            width: 100%;\n            margin-top: 20px;\n        }\n        .title_carousel {\n            margin: 0px;\n            color: white;\n            font-weight: 700;\n            margin-bottom: 10px;\n        }\n        .multiple_selected {\n            width: 100%;\n            color: white;\n            background-color: #282F3D;\n            border: none;\n            overflow: hidden;\n        }\n        .chip{\n            font-size: inherit!important;\n            padding: 2px 5px;\n        }\n        ';
 	        return _this;
@@ -306,41 +313,78 @@ module.exports =
 	            var _this2 = this;
 
 	            _axios2.default.get("/l/builder/app/php/get-posts-menus").then(function (res) {
-	                var menus = res.data;
-
-	                var _iteratorNormalCompletion = true;
-	                var _didIteratorError = false;
-	                var _iteratorError = undefined;
-
-	                try {
-	                    for (var _iterator = Object.entries(menus)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	                        var _step$value = _slicedToArray(_step.value, 2),
-	                            key = _step$value[0],
-	                            value = _step$value[1];
-
-	                        var tempdata = { label: value, value: key };
-	                        var menutemp = _this2.state.menus;
-	                        menutemp.push(tempdata);
-	                        _this2.setState({ menus: menutemp });
-	                    }
-	                } catch (err) {
-	                    _didIteratorError = true;
-	                    _iteratorError = err;
-	                } finally {
-	                    try {
-	                        if (!_iteratorNormalCompletion && _iterator.return) {
-	                            _iterator.return();
-	                        }
-	                    } finally {
-	                        if (_didIteratorError) {
-	                            throw _iteratorError;
-	                        }
-	                    }
-	                }
+	                var response = _this2.getArrMenu(res.data);
+	                _this2.setState({ menus: response });
 
 	                _this2.state.selectMenu = _this2.getPredefinedMenu(_this2.state.element);
 	                _this2.state.items = _this2.getPredefinedItems(_this2.state.element);
 	            });
+	        }
+	    }, {
+	        key: 'getArrMenu',
+	        value: function getArrMenu(res) {
+	            var response = [];
+	            var _iteratorNormalCompletion = true;
+	            var _didIteratorError = false;
+	            var _iteratorError = undefined;
+
+	            try {
+	                for (var _iterator = Object.entries(res)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                    var _step$value = _slicedToArray(_step.value, 2),
+	                        _i = _step$value[0],
+	                        j = _step$value[1];
+
+	                    response.push({ label: j, value: _i });
+	                }
+	            } catch (err) {
+	                _didIteratorError = true;
+	                _iteratorError = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion && _iterator.return) {
+	                        _iterator.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError) {
+	                        throw _iteratorError;
+	                    }
+	                }
+	            }
+
+	            if (_typeof(response[0].label) === "object") {
+	                var temps = [];
+	                for (var i = 0; i < response.length; i++) {
+	                    var _iteratorNormalCompletion2 = true;
+	                    var _didIteratorError2 = false;
+	                    var _iteratorError2 = undefined;
+
+	                    try {
+	                        for (var _iterator2 = Object.entries(response[i].label)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	                            var _step2$value = _slicedToArray(_step2.value, 2),
+	                                key = _step2$value[0],
+	                                label = _step2$value[1];
+
+	                            temps.push({ group: response[i].value, label: label, value: key });
+	                        }
+	                    } catch (err) {
+	                        _didIteratorError2 = true;
+	                        _iteratorError2 = err;
+	                    } finally {
+	                        try {
+	                            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                                _iterator2.return();
+	                            }
+	                        } finally {
+	                            if (_didIteratorError2) {
+	                                throw _iteratorError2;
+	                            }
+	                        }
+	                    }
+	                }
+	                this.state.group = "group";
+	                response = temps;
+	            }
+	            return response;
 	        }
 	    }, {
 	        key: 'getPredefinedItems',
@@ -349,9 +393,9 @@ module.exports =
 	                for (var i = 0; i < 5; i++) {
 	                    if (element.hasAttribute("nbr")) return element.getAttribute("nbr");else element = element.parentElement;
 	                }
-	                return 0;
+	                return 10;
 	            } catch (e) {
-	                return 0;
+	                return 10;
 	            }
 	        }
 	    }, {
@@ -371,9 +415,10 @@ module.exports =
 	                        var res = element.getAttribute("menus").split(",");
 	                        var arr = [];
 	                        var ms = this.state.menus;
-	                        for (var _i = 0; _i < res.length; _i++) {
-	                            arr.push({ label: this.arraySearch(ms, res[_i]), value: res[_i] });
+	                        for (var _i2 = 0; _i2 < res.length; _i2++) {
+	                            arr.push({ label: this.arraySearch(ms, res[_i2]), value: res[_i2] });
 	                        }
+	                        this.state.placeholder = "";
 	                        return arr;
 	                    } else element = element.parentElement;
 	                }
@@ -421,7 +466,9 @@ module.exports =
 	                            selectedValues: this.state.selectMenu,
 	                            onSelect: this.onSelect,
 	                            onRemove: this.onRemove,
-	                            displayValue: 'label'
+	                            displayValue: 'label',
+	                            placeholder: this.state.placeholder,
+	                            groupBy: this.state.group
 	                        })
 	                    )
 	                ),
@@ -444,12 +491,14 @@ module.exports =
 	    }, {
 	        key: 'onSelect',
 	        value: function onSelect(selectedList, selectedItem) {
+	            this.state.placeholder = selectedList.length == 0 ? this.messages.editor.settings.body.placeholder : "";
 	            this.setState({ selectMenu: selectedList });
 	            this.setEditor();
 	        }
 	    }, {
 	        key: 'onRemove',
 	        value: function onRemove(selectedList, removedItem) {
+	            this.state.placeholder = selectedList.length == 0 ? this.messages.editor.settings.body.placeholder : "";
 	            this.setState({ selectMenu: selectedList });
 	            this.setEditor();
 	        }
