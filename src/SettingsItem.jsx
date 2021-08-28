@@ -43,20 +43,28 @@ function onSubmitAction(headerStates, bodyStates) {
     let values = {
         items: state.items,
         selectLayout: state.selectLayout,
-        selectMenu: state.selectMenu
+        selectMenu: state.selectMenu,
+        sortBy: state.sortBySelect
     };
-
-    if (values.selectMenu <= 0) return;
-
+    
     var settingsReq = new FormData()
     let menus = [];
+    let sortBy = [];
+
+    if (values.selectMenu)
     for (let i = 0; i < values.selectMenu.length; i++) {
         menus.push(values.selectMenu[i].value);
+    }
+
+    if (values.sortBy)
+    for (let i = 0; i < values.sortBy.length; i++) {
+        sortBy.push(values.sortBy[i].value);
     }
 
     settingsReq.append('menus', menus);
     settingsReq.append('layout', values.selectLayout);
     settingsReq.append('nbr', values.items);
+    settingsReq.append('type', sortBy);
 
     axios.post(`/l/builder/app/php/get-paths-by-menus`, settingsReq)
         .then(res => {
@@ -67,8 +75,7 @@ function onSubmitAction(headerStates, bodyStates) {
             doc.querySelector(".document").setAttribute("menus", menus);
             doc.querySelector(".document").setAttribute("layout", values.selectLayout.toString());
             doc.querySelector(".document").setAttribute("nbr", values.items.toString());
-
-            console.log(doc.body.querySelector("section"));
+            doc.querySelector(".document").setAttribute("sortby", sortBy.toString());
 
             for (let i = 0; i < 6; i++) {
                 if (state.element.classList.contains("section")) {

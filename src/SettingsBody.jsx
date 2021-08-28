@@ -11,20 +11,60 @@ export default class Body extends Component {
         super(props);
         let selectLayout = this.getTemplate(props.element);
         let menus = [];
-        Editor.setBodyHeight(220);
+        Editor.setBodyHeight(275);
         let selectMenu = null;
+        let sortBySelect = null;
         let items = null;
 
         this.messages = Language.getDataByKey("novi-plugin-news-document");
         let placeholder = this.messages.editor.settings.body.placeholder;
+        let placeholderSortBy = this.messages.editor.settings.body.placeholder;
         let group = null;
+
+        let sortBy = [
+            {
+              "label": "Nom (ascendant)",
+              "value": "Nom (ascendant)"
+            },
+            {
+              "label": "Nom (descendant)",
+              "value": "Nom (descendant)"
+            },
+            {
+              "label": "Type (ascendant)",
+              "value": "Type (ascendant)"
+            },
+            {
+              "label": "Type (descendant)",
+              "value": "Type (descendant)"
+            },
+            {
+              "label": "Date d'accès (ascendant)",
+              "value": "Date d'accès (ascendant)"
+            },
+            {
+              "label": "Date d'accès (descendant)",
+              "value": "Date d'accès (descendant)"
+            },
+            {
+              "label": "Date de modification (ascendant)",
+              "value": "Date de modification (ascendant)"
+            },
+            {
+              "label": "Date de modification (descendant)",
+              "value": "Date de modification (descendant)"
+            }
+          ];
 
         this.state = {
             items,
             menus,
             group,
             placeholder,
+            placeholderSortBy,
             selectMenu,
+            sortBy,
+            sortBySelect,
             selectLayout,
             initValue: {
                 items
@@ -41,8 +81,11 @@ export default class Body extends Component {
         this.arraySearch = this.arraySearch.bind(this);
         this.onRemove = this.onRemove.bind(this);
         this.onSelect = this.onSelect.bind(this);
+        this.onRemoveSortBy = this.onRemoveSortBy.bind(this);
+        this.onSelectSortBy = this.onSelectSortBy.bind(this);   
         this.setEditor = this.setEditor.bind(this);
         this.getArrMenu = this.getArrMenu.bind(this);
+        this.getPredefinedSortBy = this.getPredefinedSortBy.bind(this);
 
         this.style = `
         .owl-wrap{
@@ -79,6 +122,8 @@ export default class Body extends Component {
         }
         .owl-group{
             display: flex;
+            this.getMenu();
+            this.setEditor()
             align-items: center;
             justify-content: space-between;
         }
@@ -128,6 +173,9 @@ export default class Body extends Component {
             font-size: inherit!important;
             padding: 2px 5px;
         }
+        .groupHeading{
+            font-weight: bold;
+        }
         `;
     }
 
@@ -141,8 +189,10 @@ export default class Body extends Component {
                 let response = this.getArrMenu(res.data);
                 this.setState({ menus: response });
 
-                this.state.selectMenu = this.getPredefinedMenu(this.state.element);
                 this.state.items = this.getPredefinedItems(this.state.element);
+                this.state.selectMenu = this.getPredefinedMenu(this.state.element);
+                this.state.sortBySelect = this.getPredefinedSortBy(this.state.element);
+                this.setEditor();
             });
     }
 
@@ -152,7 +202,7 @@ export default class Body extends Component {
             response.push({ label: j, value: i });
         }
 
-        if (typeof response[0].label === "object") {
+        if (response[0] && typeof response[0].label === "object") {
             let temps = [];
             for (let i = 0; i < response.length; i++) {
                 for (const [key, label] of Object.entries(response[i].label)) {
@@ -206,6 +256,26 @@ export default class Body extends Component {
         }
     }
 
+    getPredefinedSortBy(element) {
+        try {
+            for (let i = 0; i < 5; i++) {
+                if (element.getAttribute("sortby")) {
+                    let res = element.getAttribute("sortby").split(",");
+                    let arr = [];
+                    let ms = this.state.sortBy;
+                    for (let i = 0; i < res.length; i++) {
+                        arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
+                    }
+                    this.state.placeholderSortBy = "";
+                    return arr;
+                }
+                else element = element.parentElement
+            }
+            return null;
+        } catch (e) {
+            return null;
+        }
+    }
 
     getTemplate(element) {
         for (let i = 0; i < 5; i++) {
@@ -241,6 +311,24 @@ export default class Body extends Component {
                             displayValue="label"
                             placeholder= {this.state.placeholder}
                             groupBy={this.state.group}
+                            emptyRecordMsg={this.messages.editor.settings.body.emptyRecordMsg}
+                        />
+                    </div>
+                </div>
+
+                <div className="owl-switcher blockSelect">
+                    <p className="novi-label" style={{ "margin": 0 }}>
+                        {this.messages.editor.settings.body.titleSortBy}
+                    </p>
+                    <div className="owl-switcher">
+                        <Multiselect
+                            options={this.state.sortBy}
+                            selectedValues={this.state.sortBySelect}
+                            onSelect={this.onSelectSortBy}
+                            onRemove={this.onRemoveSortBy}
+                            placeholder= {this.state.placeholderSortBy}
+                            displayValue="label"
+                            emptyRecordMsg={this.messages.editor.settings.body.emptyRecordMsg}
                         />
                     </div>
                 </div>
@@ -250,7 +338,7 @@ export default class Body extends Component {
                         {this.messages.editor.settings.body.visibleItems}
                     </p>
                     <div className="owl-switcher">
-                        <InputNumber min={1} max={50} value={this.state.items} onChange={this._handleNumberItemChange} />
+                        <InputNumber min={1} max={5000} value={this.state.items} onChange={this._handleNumberItemChange} />
                     </div>
                 </div>
             </div>
@@ -269,6 +357,18 @@ export default class Body extends Component {
         this.setEditor()
     }
 
+    onSelectSortBy(selectedList, selectedItem) {
+        this.state.placeholderSortBy = selectedList.length == 0 ? this.messages.editor.settings.body.placeholder : "";
+        this.setState({ sortBySelect: selectedList });
+        this.setEditor()
+    }
+
+    onRemoveSortBy(selectedList, removedItem) {
+        this.state.placeholderSortBy = selectedList.length == 0 ? this.messages.editor.settings.body.placeholder : "";
+        this.setState({ sortBySelect: selectedList });
+        this.setEditor()
+    }
+
     _handleNumberItemChange(value) {
         this.setState({
             items: value
@@ -276,7 +376,7 @@ export default class Body extends Component {
     }
 
     setEditor() {
-        let selectedListsLength = this.state.selectMenu ? this.state.selectMenu.length : 0
-        Editor.setBodyHeight(220 + (13 * selectedListsLength))
+        let selectedListsLength = (this.state.selectMenu ? this.state.selectMenu.length : 0) + (this.state.sortBySelect ? this.state.sortBySelect.length : 0);
+        Editor.setBodyHeight(275 + (19 * selectedListsLength))
     }
 }
