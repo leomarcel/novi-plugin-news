@@ -121,6 +121,9 @@ export default class Body extends Component {
             font-size: inherit!important;
             padding: 2px 5px;
         }
+        .groupHeading{
+            font-weight: bold;
+        }
         `;
     }
 
@@ -135,6 +138,7 @@ export default class Body extends Component {
                 this.setState({ menus: response });
 
                 this.state.selectMenu = this.getPredefinedMenu(this.state.element);
+                this.setEditor();
             });
     }
 
@@ -144,7 +148,7 @@ export default class Body extends Component {
             response.push({ label: j, value: i });
         }
 
-        if (typeof response[0].label === "object") {
+        if (response[0] && typeof response[0].label === "object") {
             let temps = [];
             for (let i = 0; i < response.length; i++) {
                 for (const [key, label] of Object.entries(response[i].label)) {
@@ -220,6 +224,7 @@ export default class Body extends Component {
                             displayValue="label"
                             placeholder= {this.state.placeholder}
                             groupBy={this.state.group}
+                            emptyRecordMsg={this.messages.editor.settings.body.emptyRecordMsg}
                         />
                     </div>
                 </div>
