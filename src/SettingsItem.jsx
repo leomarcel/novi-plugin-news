@@ -38,16 +38,18 @@ function onSubmitAction(headerStates, bodyStates) {
         selectDomains: state.selectDomains
     };
 
-    if (values.selectClubs <= 0 && values.selectDomains <= 0) return;
-
     var settingsReq = new FormData()
 
     let clubs = [];
+    
+    if (values.selectClubs)
     for (let i = 0; i < values.selectClubs.length; i++) {
         clubs.push(values.selectClubs[i].value);
     }
 
     let domains = [];
+
+    if (values.selectDomains)
     for (let i = 0; i < values.selectDomains.length; i++) {
         domains.push(values.selectDomains[i].value);
     }
@@ -65,8 +67,6 @@ function onSubmitAction(headerStates, bodyStates) {
             doc.querySelector(".card").setAttribute("clubs", clubs);
             doc.querySelector(".card").setAttribute("domains", domains);
             doc.querySelector(".card").setAttribute("layout", values.selectLayout.toString());
-
-            console.log(doc.body.querySelector("section"));
 
             for (let i = 0; i < 6; i++) {
                 if (state.element.classList.contains("section")) {

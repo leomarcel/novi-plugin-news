@@ -132,6 +132,9 @@ export default class Body extends Component {
             font-size: inherit!important;
             padding: 2px 5px;
         }
+        .groupHeading{
+            font-weight: bold;
+        }
         `;
     }
 
@@ -143,14 +146,14 @@ export default class Body extends Component {
         axios.get("/l/builder/app/php/get-gmap-menus")
             .then(res => {
                 try {
-                    let response = this.getArrMenu(res.data.clubs);
+                    let response = this.getArrMenu(res.data.clubs, "clubs");
                     this.setState({ clubs: response });
                 } catch (error) {
                     console.log("no data clubs")
                 }
 
                 try {
-                    let response = this.getArrMenu(res.data.domains);
+                    let response = this.getArrMenu(res.data.domains, "domains");
                     this.setState({ domains: response });
                 } catch (error) {
                     console.log("no data domains")
@@ -158,24 +161,25 @@ export default class Body extends Component {
 
                 this.state.selectClubs = this.getPredefinedClubs(this.state.element);
                 this.state.selectDomains = this.getPredefinedDomains(this.state.element);
+                this.setEditor();
             });
     }
 
-    getArrMenu(res) {
+    getArrMenu(res, type) {
         let response = [];
         for (const [i, j] of Object.entries(res)) {
             response.push({ label: j, value: i });
         }
 
-        if (typeof response[0].label === "object") {
+        if (response[0] && typeof response[0].label === "object") {
             let temps = [];
             for (let i = 0; i < response.length; i++) {
                 for (const [key, label] of Object.entries(response[i].label)) {
                     temps.push({ group: response[i].value, label: label, value: key });
                 }
             }
-            this.state.groupClubs = type === "clubs" ? "group" : null;
-            this.state.groupDomains = type === "domains" ? "group" : null;
+            if (type === "clubs") this.state.groupClubs = "group";
+            if (type === "domains") this.state.groupDomains = "group";
 
             response = temps;
         }
@@ -192,7 +196,7 @@ export default class Body extends Component {
     getPredefinedClubs(element) {
         try {
             for (let i = 0; i < 5; i++) {
-                if (element.hasAttribute("clubs")) {
+                if (element.getAttribute("clubs")) {
                     let res = element.getAttribute("clubs").split(",");
                     let arr = [];
                     let ms = this.state.clubs;
@@ -210,9 +214,8 @@ export default class Body extends Component {
     }
     getPredefinedDomains(element) {
         try {
-            element = element.querySelector(".card");
             for (let i = 0; i < 5; i++) {
-                if (element.hasAttribute("domains")) {
+                if (element.getAttribute("domains")) {
                     let res = element.getAttribute("domains").split(",");
                     let arr = [];
                     let ms = this.state.domains;
@@ -263,6 +266,7 @@ export default class Body extends Component {
                             displayValue="label"
                             placeholder= {this.state.placeholder}
                             groupBy={this.state.groupClubs}
+                            emptyRecordMsg={this.messages.editor.settings.body.emptyRecordMsg}
                         />
                     </div>
                 </div>
@@ -280,6 +284,7 @@ export default class Body extends Component {
                             displayValue="label"
                             placeholder= {this.state.placeholders}
                             groupBy={this.state.groupDomains}
+                            emptyRecordMsg={this.messages.editor.settings.body.emptyRecordMsg}
                         />
                     </div>
                 </div>
