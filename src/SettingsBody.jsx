@@ -140,6 +140,9 @@ export default class Body extends Component {
             font-size: inherit!important;
             padding: 2px 5px;
         }
+        .groupHeading{
+            font-weight: bold;
+        }
         `;
     }
 
@@ -151,14 +154,14 @@ export default class Body extends Component {
         axios.get("/l/builder/app/php/get-assdom-menus")
             .then(res => {
                 try {
-                    let response = this.getArrMenu(res.data.clubs);
+                    let response = this.getArrMenu(res.data.clubs, "clubs");
                     this.setState({ clubs: response });
                 } catch (error) {
                     console.log("no data clubs")
                 }
 
                 try {
-                    let response = this.getArrMenu(res.data.domains);
+                    let response = this.getArrMenu(res.data.domains, "domains");
                     this.setState({ domains: response });
                 } catch (error) {
                     console.log("no data domains")
@@ -167,6 +170,7 @@ export default class Body extends Component {
                 this.state.selectClubs = this.getPredefinedClubs(this.state.element);
                 this.state.selectDomains = this.getPredefinedDomains(this.state.element);
                 this.state.items = this.getPredefinedItems(this.state.element);
+                this.setEditor();
             });
     }
 
@@ -176,7 +180,7 @@ export default class Body extends Component {
             response.push({ label: j, value: i });
         }
 
-        if (typeof response[0].label === "object") {
+        if (response[0] && typeof response[0].label === "object") {
             let temps = [];
             for (let i = 0; i < response.length; i++) {
                 for (const [key, label] of Object.entries(response[i].label)) {
@@ -184,8 +188,8 @@ export default class Body extends Component {
                 }
             }
 
-            this.state.groupClubs = type === "clubs" ? "group" : null;
-            this.state.groupDomains = type === "domains" ? "group" : null;
+            if (type === "clubs") this.state.groupClubs = "group";
+            if (type === "domains") this.state.groupDomains = "group";
 
             response = temps;
         }
@@ -202,7 +206,7 @@ export default class Body extends Component {
     getPredefinedItems(element) {
         try {
             for (let i = 0; i < 5; i++) {
-                if (element.hasAttribute("nbr")) return element.getAttribute("nbr");
+                if (element.getAttribute("nbr")) return element.getAttribute("nbr");
                 else element = element.parentElement
             }
             return 10;
@@ -214,7 +218,7 @@ export default class Body extends Component {
     getPredefinedClubs(element) {
         try {
             for (let i = 0; i < 5; i++) {
-                if (element.hasAttribute("clubs")){
+                if (element.getAttribute("clubs")){
                     let res = element.getAttribute("clubs").split(",");
                     let arr = [];
                     let ms = this.state.clubs;
@@ -236,7 +240,7 @@ export default class Body extends Component {
     getPredefinedDomains(element) {
         try {
             for (let i = 0; i < 5; i++) {
-                if (element.hasAttribute("domains")) {
+                if (element.getAttribute("domains")) {
                     let res = element.getAttribute("domains").split(",");
                     let arr = [];
                     let ms = this.state.domains;
@@ -258,7 +262,7 @@ export default class Body extends Component {
     getTemplate(element) {
         for (let i = 0; i < 5; i++) {
             try {
-                if (element.hasAttribute("template")) return element.getAttribute("template")
+                if (element.getAttribute("template")) return element.getAttribute("template")
                 else element = element.parentElement
             }
             catch (e) {
@@ -289,6 +293,7 @@ export default class Body extends Component {
                             displayValue="label"
                             placeholder= {this.state.placeholder}
                             groupBy={this.state.groupClubs}
+                            emptyRecordMsg={this.messages.editor.settings.body.emptyRecordMsg}
                         />
                     </div>
                 </div>
@@ -306,6 +311,7 @@ export default class Body extends Component {
                             displayValue="label"
                             placeholder= {this.state.placeholders}
                             groupBy={this.state.groupDomains}
+                            emptyRecordMsg={this.messages.editor.settings.body.emptyRecordMsg}
                         />
                     </div>
                 </div>
@@ -315,7 +321,7 @@ export default class Body extends Component {
                         {this.messages.editor.settings.body.visibleItems}
                     </p>
                     <div className="owl-switcher">
-                        <InputNumber min={1} max={50} value={this.state.items} onChange={this._handleNumberItemChange} />
+                        <InputNumber min={1} max={5000} value={this.state.items} onChange={this._handleNumberItemChange} />
                     </div>
                 </div>
 
