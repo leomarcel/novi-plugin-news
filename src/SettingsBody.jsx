@@ -128,6 +128,9 @@ export default class Body extends Component {
             font-size: inherit!important;
             padding: 2px 5px;
         }
+        .groupHeading{
+            font-weight: bold;
+        }
         `;
     }
 
@@ -143,6 +146,7 @@ export default class Body extends Component {
 
                 this.state.selectMenu = this.getPredefinedMenu(this.state.element);
                 this.state.items = this.getPredefinedItems(this.state.element);
+                this.setEditor();
             });
     }
 
@@ -152,7 +156,7 @@ export default class Body extends Component {
             response.push({ label: j, value: i });
         }
 
-        if (typeof response[0].label === "object") {
+        if (response[0] && typeof response[0].label === "object") {
             let temps = [];
             for (let i = 0; i < response.length; i++) {
                 for (const [key, label] of Object.entries(response[i].label)) {
@@ -168,7 +172,7 @@ export default class Body extends Component {
     getPredefinedItems(element) {
         try {
             for (let i = 0; i < 5; i++) {
-                if (element.hasAttribute("nbr")) return element.getAttribute("nbr");
+                if (element.getAttribute("nbr")) return element.getAttribute("nbr");
                 else element = element.parentElement
             }
             return 10;
@@ -233,6 +237,7 @@ export default class Body extends Component {
                             displayValue="label"
                             placeholder= {this.state.placeholder}
                             groupBy={this.state.group}
+                            emptyRecordMsg={this.messages.editor.settings.body.emptyRecordMsg}
                         />
                     </div>
                 </div>
@@ -242,7 +247,7 @@ export default class Body extends Component {
                         {this.messages.editor.settings.body.visibleItems}
                     </p>
                     <div className="owl-switcher">
-                        <InputNumber min={1} max={50} value={this.state.items} onChange={this._handleNumberItemChange} />
+                        <InputNumber min={1} max={5000} value={this.state.items} onChange={this._handleNumberItemChange} />
                     </div>
                 </div>
             </div>

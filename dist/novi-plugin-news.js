@@ -179,11 +179,10 @@ module.exports =
 	        selectMenu: state.selectMenu
 	    };
 
-	    if (values.selectMenu <= 0) return;
-
 	    var settingsReq = new FormData();
 	    var menus = [];
-	    for (var i = 0; i < values.selectMenu.length; i++) {
+
+	    if (values.selectMenu) for (var i = 0; i < values.selectMenu.length; i++) {
 	        menus.push(values.selectMenu[i].value);
 	    }
 	    settingsReq.append('menus', menus);
@@ -204,7 +203,6 @@ module.exports =
 	        doc.querySelector(".news").setAttribute("nbr", values.items.toString());
 
 	        var content = doc.body.querySelector("section");
-	        console.log(content);
 
 	        for (var _i2 = 0; _i2 < 6; _i2++) {
 	            if (state.element.classList.contains("section")) {
@@ -298,7 +296,7 @@ module.exports =
 	        _this.setEditor = _this.setEditor.bind(_this);
 	        _this.getArrMenu = _this.getArrMenu.bind(_this);
 
-	        _this.style = '\n        .owl-wrap{\n            padding: 0 12px;\n            display: flex;\n            flex-direction: column;\n            justify-content: center;\n            height: 100%;\n            color: #6E778A;\n        }\n        .owl-switcher{\n            display: flex;\n            flex-direction: row;\n            justify-content: space-between;\n            align-items: center;\n            margin-top: 16px;\n            -webkit-transition: 0.15s all cubic-bezier(0.4, 0, 1, 1);\n            transition: 0.15s all cubic-bezier(0.4, 0, 1, 1);\n            opacity: 1;\n            visibility: visible;\n        }\n        .owl-switcher.disabled{\n            opacity: 0;\n            visibility: hidden;\n            height: 0;\n            margin-top: 0;\n        }\n      \n        .owl-switcher .novi-input{\n            width: 55px;\n        }  \n        .owl-wrap .Select-menu-outer, .owl-wrap .Select-menu{\n            max-height: 8selectLayout5px;\n        }\n        .owl-group{\n            display: flex;\n            align-items: center;\n            justify-content: space-between;\n        }\n        .blockSelect{\n            display: block;\n        }\n        .selectTemplate{\n            width: 100%;\n        }\n        .btnSelectTemplate {\n            font-weight: 400;\n            transition: 0.33s all ease-in;\n            border: 3px;\n            letter-spacing: 0;\n            white-space: normal;\n            max-width: 100%;\n            background-color: #6E778A;\n            color: white;\n            display: inline-block;\n            border-radius: 3px;\n            padding-left: 3px;\n            padding-right: 3px;\n            font-size: 11px;\n            line-height: 24px;\n            position: relative;\n            cursor: pointer;\n        }\n        .hr_settings {\n            border: 1px solid #6E778A;\n            width: 100%;\n            margin-top: 20px;\n        }\n        .title_carousel {\n            margin: 0px;\n            color: white;\n            font-weight: 700;\n            margin-bottom: 10px;\n        }\n        .multiple_selected {\n            width: 100%;\n            color: white;\n            background-color: #282F3D;\n            border: none;\n            overflow: hidden;\n        }\n        .chip{\n            font-size: inherit!important;\n            padding: 2px 5px;\n        }\n        ';
+	        _this.style = '\n        .owl-wrap{\n            padding: 0 12px;\n            display: flex;\n            flex-direction: column;\n            justify-content: center;\n            height: 100%;\n            color: #6E778A;\n        }\n        .owl-switcher{\n            display: flex;\n            flex-direction: row;\n            justify-content: space-between;\n            align-items: center;\n            margin-top: 16px;\n            -webkit-transition: 0.15s all cubic-bezier(0.4, 0, 1, 1);\n            transition: 0.15s all cubic-bezier(0.4, 0, 1, 1);\n            opacity: 1;\n            visibility: visible;\n        }\n        .owl-switcher.disabled{\n            opacity: 0;\n            visibility: hidden;\n            height: 0;\n            margin-top: 0;\n        }\n      \n        .owl-switcher .novi-input{\n            width: 55px;\n        }  \n        .owl-wrap .Select-menu-outer, .owl-wrap .Select-menu{\n            max-height: 8selectLayout5px;\n        }\n        .owl-group{\n            display: flex;\n            align-items: center;\n            justify-content: space-between;\n        }\n        .blockSelect{\n            display: block;\n        }\n        .selectTemplate{\n            width: 100%;\n        }\n        .btnSelectTemplate {\n            font-weight: 400;\n            transition: 0.33s all ease-in;\n            border: 3px;\n            letter-spacing: 0;\n            white-space: normal;\n            max-width: 100%;\n            background-color: #6E778A;\n            color: white;\n            display: inline-block;\n            border-radius: 3px;\n            padding-left: 3px;\n            padding-right: 3px;\n            font-size: 11px;\n            line-height: 24px;\n            position: relative;\n            cursor: pointer;\n        }\n        .hr_settings {\n            border: 1px solid #6E778A;\n            width: 100%;\n            margin-top: 20px;\n        }\n        .title_carousel {\n            margin: 0px;\n            color: white;\n            font-weight: 700;\n            margin-bottom: 10px;\n        }\n        .multiple_selected {\n            width: 100%;\n            color: white;\n            background-color: #282F3D;\n            border: none;\n            overflow: hidden;\n        }\n        .chip{\n            font-size: inherit!important;\n            padding: 2px 5px;\n        }\n        .groupHeading{\n            font-weight: bold;\n        }\n        ';
 	        return _this;
 	    }
 
@@ -318,6 +316,7 @@ module.exports =
 
 	                _this2.state.selectMenu = _this2.getPredefinedMenu(_this2.state.element);
 	                _this2.state.items = _this2.getPredefinedItems(_this2.state.element);
+	                _this2.setEditor();
 	            });
 	        }
 	    }, {
@@ -351,7 +350,7 @@ module.exports =
 	                }
 	            }
 
-	            if (_typeof(response[0].label) === "object") {
+	            if (response[0] && _typeof(response[0].label) === "object") {
 	                var temps = [];
 	                for (var i = 0; i < response.length; i++) {
 	                    var _iteratorNormalCompletion2 = true;
@@ -391,7 +390,7 @@ module.exports =
 	        value: function getPredefinedItems(element) {
 	            try {
 	                for (var i = 0; i < 5; i++) {
-	                    if (element.hasAttribute("nbr")) return element.getAttribute("nbr");else element = element.parentElement;
+	                    if (element.getAttribute("nbr")) return element.getAttribute("nbr");else element = element.parentElement;
 	                }
 	                return 10;
 	            } catch (e) {
@@ -468,7 +467,8 @@ module.exports =
 	                            onRemove: this.onRemove,
 	                            displayValue: 'label',
 	                            placeholder: this.state.placeholder,
-	                            groupBy: this.state.group
+	                            groupBy: this.state.group,
+	                            emptyRecordMsg: this.messages.editor.settings.body.emptyRecordMsg
 	                        })
 	                    )
 	                ),
@@ -483,7 +483,7 @@ module.exports =
 	                    React.createElement(
 	                        'div',
 	                        { className: 'owl-switcher' },
-	                        React.createElement(InputNumber, { min: 1, max: 50, value: this.state.items, onChange: this._handleNumberItemChange })
+	                        React.createElement(InputNumber, { min: 1, max: 5000, value: this.state.items, onChange: this._handleNumberItemChange })
 	                    )
 	                )
 	            );

@@ -64,10 +64,10 @@ function onSubmitAction(headerStates, bodyStates) {
         selectMenu: state.selectMenu
     };
 
-    if (values.selectMenu <= 0) return;
-
     var settingsReq = new FormData()
     let menus = [];
+
+    if (values.selectMenu)
     for (let i = 0; i < values.selectMenu.length; i++) {
         menus.push(values.selectMenu[i].value);
     }
@@ -91,7 +91,6 @@ function onSubmitAction(headerStates, bodyStates) {
             doc.querySelector(".news").setAttribute("nbr", values.items.toString());
 
             let content = doc.body.querySelector("section");
-            console.log(content);
             
             for (let i = 0; i < 6; i++) {
                 if (state.element.classList.contains("section")) {
