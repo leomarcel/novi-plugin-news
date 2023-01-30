@@ -4,6 +4,7 @@ const Component = novi.react.Component;
 const InputNumber = novi.ui.inputNumber;
 const Editor = novi.editor;
 const Language = novi.language;
+const Checkbox = novi.ui.checkbox;
 import Multiselect from 'multiselect-react-dropdown';
 
 export default class Body extends Component {
@@ -11,7 +12,7 @@ export default class Body extends Component {
         super(props);
         let selectLayout = this.getTemplate(props.element);
         let menus = [];
-        Editor.setBodyHeight(125);
+        Editor.setBodyHeight(175);
         let selectMenu = null;
 
         this.messages = Language.getDataByKey("novi-plugin-news-teams");
@@ -25,7 +26,9 @@ export default class Body extends Component {
             placeholder,
             selectLayout,
             element: props.element,
-            childElement: props.childElement
+            childElement: props.childElement,
+            phone: false,
+            birthday: false
         };
 
         this.getMenu = this.getMenu.bind(this);
@@ -36,6 +39,8 @@ export default class Body extends Component {
         this.onSelect = this.onSelect.bind(this);
         this.setEditor = this.setEditor.bind(this);
         this.getArrMenu = this.getArrMenu.bind(this);
+        this._handleBirthday = this._handleBirthday.bind(this);
+        this._handlePhone = this._handlePhone.bind(this);
 
         this.style = `
         .owl-wrap{
@@ -137,7 +142,7 @@ export default class Body extends Component {
                 let response = this.getArrMenu(res.data);
                 this.setState({ menus: response });
 
-                this.state.selectMenu = this.getPredefinedMenu(this.state.element);
+                this.getPredefinedMenu(this.state.element);
                 this.setEditor();
             });
     }
@@ -173,20 +178,20 @@ export default class Body extends Component {
         try {
             for (let i = 0; i < 5; i++) {
                 if (element.getAttribute("menus")) {
+                    if (element.getAttribute("phone")) this.setState({ phone: Boolean(element.getAttribute("phone") === "true") });
+                    if (element.getAttribute("birthday")) this.setState({ birthday: Boolean(element.getAttribute("birthday") === "true") });
                     let res = element.getAttribute("menus").split(",");
                     let arr = [];
                     let ms = this.state.menus;
                     for (let i = 0; i < res.length; i++) {
                         arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
                     }
-                    this.state.placeholder = "";
-                    return arr;
+                    this.setState({ selectMenu: arr });
                 }
                 else element = element.parentElement
             }
-            return null;
         } catch (e) {
-            return null;
+            console.log("err getPredefinedMenu");
         }
     }
 
@@ -202,6 +207,9 @@ export default class Body extends Component {
             }
         }
     }
+
+    _handleBirthday(e){ this.setState({ birthday: e }); }
+    _handlePhone(e){ this.setState({ phone: e }); }
 
     render() {
         return (
@@ -228,24 +236,32 @@ export default class Body extends Component {
                         />
                     </div>
                 </div>
+                <div style={{ "marginTop": 10 }}>
+                    <Checkbox checked={this.state.birthday} onChange={this._handleBirthday}>
+                        Afficher les anniversaires (si autorisé)
+                    </Checkbox>
+                    <Checkbox style={{ "marginTop": 5 }} checked={this.state.phone} onChange={this._handlePhone}>
+                        Afficher les numéros de téléphone (si autorisé)
+                    </Checkbox>
+                </div>
             </div>
         )
     }
 
     onSelect(selectedList, selectedItem) {
-        this.state.placeholder = selectedList.length == 0 ? this.messages.editor.settings.body.placeholder : "";
+        this.state.placeholder = selectedList.length === 0 ? this.messages.editor.settings.body.placeholder : "";
         this.setState({ selectMenu: selectedList });
         this.setEditor()
     }
 
     onRemove(selectedList, removedItem) {
-        this.state.placeholder = selectedList.length == 0 ? this.messages.editor.settings.body.placeholder : "";
+        this.state.placeholder = selectedList.length === 0 ? this.messages.editor.settings.body.placeholder : "";
         this.setState({ selectMenu: selectedList });
         this.setEditor()
     }
 
     setEditor(){
         let selectedListsLength = this.state.selectMenu ? this.state.selectMenu.length : 0
-        Editor.setBodyHeight(125 + (15 * selectedListsLength))
+        Editor.setBodyHeight(175 + (15 * selectedListsLength))
     }
 }

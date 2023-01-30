@@ -57,7 +57,9 @@ function onSubmitAction(headerStates, bodyStates) {
 
     let values = {
         selectLayout: state.selectLayout,
-        selectMenu: state.selectMenu
+        selectMenu: state.selectMenu,
+        birthday: state.birthday,
+        phone: state.phone,
     };
 
     var settingsReq = new FormData()
@@ -70,6 +72,8 @@ function onSubmitAction(headerStates, bodyStates) {
 
     settingsReq.append('menus', menus);
     settingsReq.append('layout', values.selectLayout);
+    settingsReq.append('birthday', values.birthday);
+    settingsReq.append('phone', values.phone);
 
     axios.post(`/l/builder/app/php/get-teams-by-menus`, settingsReq)
         .then(res => {
@@ -79,6 +83,8 @@ function onSubmitAction(headerStates, bodyStates) {
 
             doc.querySelector(".teams").setAttribute("menus", menus);
             doc.querySelector(".teams").setAttribute("layout", values.selectLayout.toString());
+            doc.querySelector(".teams").setAttribute("birthday", values.birthday.toString());
+            doc.querySelector(".teams").setAttribute("phone", values.phone.toString());
 
             for (let i = 0; i < 6; i++) {
                 if (state.element.classList.contains("section")) {
