@@ -176,7 +176,8 @@ module.exports =
 	    var values = {
 	        items: state.items,
 	        selectLayout: state.selectLayout,
-	        selectMenu: state.selectMenu
+	        selectMenu: state.selectMenu,
+	        showButtonInfo: state.showButtonInfo
 	    };
 
 	    var settingsReq = new FormData();
@@ -188,6 +189,7 @@ module.exports =
 	    settingsReq.append('menus', menus);
 	    settingsReq.append('layout', values.selectLayout);
 	    settingsReq.append('nbr', values.items);
+	    settingsReq.append('showButtonInfo', values.showButtonInfo);
 
 	    _axios2.default.post("/l/builder/app/php/get-posts-by-menus", settingsReq).then(function (res) {
 	        // console.log(res.data);
@@ -201,6 +203,7 @@ module.exports =
 	        doc.querySelector(".news").setAttribute("menus", menus);
 	        doc.querySelector(".news").setAttribute("layout", values.selectLayout.toString());
 	        doc.querySelector(".news").setAttribute("nbr", values.items.toString());
+	        doc.querySelector(".news").setAttribute("showButtonInfo", values.showButtonInfo.toString());
 
 	        var content = doc.body.querySelector("section");
 
@@ -252,6 +255,7 @@ module.exports =
 	var InputNumber = novi.ui.inputNumber;
 	var Editor = novi.editor;
 	var Language = novi.language;
+	var Checkbox = novi.ui.checkbox;
 
 	var Body = function (_Component) {
 	    _inherits(Body, _Component);
@@ -263,7 +267,7 @@ module.exports =
 
 	        var selectLayout = _this.getTemplate(props.element);
 	        var menus = [];
-	        Editor.setBodyHeight(220);
+	        Editor.setBodyHeight(230);
 	        var selectMenu = null;
 	        var items = 10;
 
@@ -282,19 +286,20 @@ module.exports =
 	                items: items
 	            },
 	            element: props.element,
-	            childElement: props.childElement
+	            childElement: props.childElement,
+	            showButtonInfo: false
 	        };
 
 	        _this._handleNumberItemChange = _this._handleNumberItemChange.bind(_this);
 	        _this.getMenu = _this.getMenu.bind(_this);
 	        _this.getTemplate = _this.getTemplate.bind(_this);
-	        _this.getPredefinedItems = _this.getPredefinedItems.bind(_this);
-	        _this.getPredefinedMenu = _this.getPredefinedMenu.bind(_this);
 	        _this.arraySearch = _this.arraySearch.bind(_this);
 	        _this.onRemove = _this.onRemove.bind(_this);
 	        _this.onSelect = _this.onSelect.bind(_this);
 	        _this.setEditor = _this.setEditor.bind(_this);
 	        _this.getArrMenu = _this.getArrMenu.bind(_this);
+	        _this.getPredefined = _this.getPredefined.bind(_this);
+	        _this._handleShowButtonInfoChange = _this._handleShowButtonInfoChange.bind(_this);
 
 	        _this.style = '\n        .owl-wrap{\n            padding: 0 12px;\n            display: flex;\n            flex-direction: column;\n            justify-content: center;\n            height: 100%;\n            color: #6E778A;\n        }\n        .owl-switcher{\n            display: flex;\n            flex-direction: row;\n            justify-content: space-between;\n            align-items: center;\n            margin-top: 16px;\n            -webkit-transition: 0.15s all cubic-bezier(0.4, 0, 1, 1);\n            transition: 0.15s all cubic-bezier(0.4, 0, 1, 1);\n            opacity: 1;\n            visibility: visible;\n        }\n        .owl-switcher.disabled{\n            opacity: 0;\n            visibility: hidden;\n            height: 0;\n            margin-top: 0;\n        }\n      \n        .owl-switcher .novi-input{\n            width: 55px;\n        }  \n        .owl-wrap .Select-menu-outer, .owl-wrap .Select-menu{\n            max-height: 8selectLayout5px;\n        }\n        .owl-group{\n            display: flex;\n            align-items: center;\n            justify-content: space-between;\n        }\n        .blockSelect{\n            display: block;\n        }\n        .selectTemplate{\n            width: 100%;\n        }\n        .btnSelectTemplate {\n            font-weight: 400;\n            transition: 0.33s all ease-in;\n            border: 3px;\n            letter-spacing: 0;\n            white-space: normal;\n            max-width: 100%;\n            background-color: #6E778A;\n            color: white;\n            display: inline-block;\n            border-radius: 3px;\n            padding-left: 3px;\n            padding-right: 3px;\n            font-size: 11px;\n            line-height: 24px;\n            position: relative;\n            cursor: pointer;\n        }\n        .hr_settings {\n            border: 1px solid #6E778A;\n            width: 100%;\n            margin-top: 20px;\n        }\n        .title_carousel {\n            margin: 0px;\n            color: white;\n            font-weight: 700;\n            margin-bottom: 10px;\n        }\n        .multiple_selected {\n            width: 100%;\n            color: white;\n            background-color: #282F3D;\n            border: none;\n            overflow: hidden;\n        }\n        .chip{\n            font-size: inherit!important;\n            padding: 2px 5px;\n        }\n        .groupHeading{\n            font-weight: bold;\n        }\n        ';
 	        return _this;
@@ -314,8 +319,7 @@ module.exports =
 	                var response = _this2.getArrMenu(res.data);
 	                _this2.setState({ menus: response });
 
-	                _this2.state.selectMenu = _this2.getPredefinedMenu(_this2.state.element);
-	                _this2.state.items = _this2.getPredefinedItems(_this2.state.element);
+	                _this2.getPredefined(_this2.state.element);
 	                _this2.setEditor();
 	            });
 	        }
@@ -386,15 +390,25 @@ module.exports =
 	            return response;
 	        }
 	    }, {
-	        key: 'getPredefinedItems',
-	        value: function getPredefinedItems(element) {
+	        key: 'getPredefined',
+	        value: function getPredefined(element) {
 	            try {
 	                for (var i = 0; i < 5; i++) {
-	                    if (element.getAttribute("nbr")) return element.getAttribute("nbr");else element = element.parentElement;
+	                    if (element.getAttribute("menus")) {
+	                        if (element.getAttribute("nbr")) this.setState({ nbr: element.getAttribute("nbr") });
+	                        if (element.getAttribute("showbuttoninfo")) this.setState({ showButtonInfo: element.getAttribute("showbuttoninfo") === "true" });
+	                        var res = element.getAttribute("menus").split(",");
+	                        var arr = [];
+	                        var ms = this.state.menus;
+	                        for (var _i2 = 0; _i2 < res.length; _i2++) {
+	                            arr.push({ label: this.arraySearch(ms, res[_i2]), value: res[_i2] });
+	                        }
+	                        this.setState({ selectMenu: arr });
+	                    } else element = element.parentElement;
 	                }
-	                return 10;
+	                return null;
 	            } catch (e) {
-	                return 10;
+	                return null;
 	            }
 	        }
 	    }, {
@@ -404,27 +418,6 @@ module.exports =
 	                if (arr[el].value == val) return arr[el].label;
 	            }
 	            return null;
-	        }
-	    }, {
-	        key: 'getPredefinedMenu',
-	        value: function getPredefinedMenu(element) {
-	            try {
-	                for (var i = 0; i < 5; i++) {
-	                    if (element.getAttribute("menus")) {
-	                        var res = element.getAttribute("menus").split(",");
-	                        var arr = [];
-	                        var ms = this.state.menus;
-	                        for (var _i2 = 0; _i2 < res.length; _i2++) {
-	                            arr.push({ label: this.arraySearch(ms, res[_i2]), value: res[_i2] });
-	                        }
-	                        this.state.placeholder = "";
-	                        return arr;
-	                    } else element = element.parentElement;
-	                }
-	                return null;
-	            } catch (e) {
-	                return null;
-	            }
 	        }
 	    }, {
 	        key: 'getTemplate',
@@ -485,6 +478,15 @@ module.exports =
 	                        { className: 'owl-switcher' },
 	                        React.createElement(InputNumber, { min: 1, max: 5000, value: this.state.items, onChange: this._handleNumberItemChange })
 	                    )
+	                ),
+	                React.createElement(
+	                    'div',
+	                    { style: { "marginTop": 10 } },
+	                    React.createElement(
+	                        Checkbox,
+	                        { checked: this.state.showButtonInfo, onChange: this._handleShowButtonInfoChange },
+	                        'Afficher un bouton "En savoir plus" sur les \xE9v\xE9nements'
+	                    )
 	                )
 	            );
 	        }
@@ -510,10 +512,17 @@ module.exports =
 	            });
 	        }
 	    }, {
+	        key: '_handleShowButtonInfoChange',
+	        value: function _handleShowButtonInfoChange(value) {
+	            this.setState({
+	                showButtonInfo: value
+	            });
+	        }
+	    }, {
 	        key: 'setEditor',
 	        value: function setEditor() {
 	            var selectedListsLength = this.state.selectMenu ? this.state.selectMenu.length : 0;
-	            Editor.setBodyHeight(210 + 12 * selectedListsLength);
+	            Editor.setBodyHeight(230 + 12 * selectedListsLength);
 	        }
 	    }]);
 

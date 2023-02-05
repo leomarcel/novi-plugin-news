@@ -55,13 +55,14 @@ function onSubmitAction(headerStates, bodyStates) {
     // post-carousel-variant-5
     // post-carousel-variant-6
     // services-variant-4
-    
+
     let state = bodyStates[0];
 
     let values = {
         items: state.items,
         selectLayout: state.selectLayout,
-        selectMenu: state.selectMenu
+        selectMenu: state.selectMenu,
+        showButtonInfo: state.showButtonInfo
     };
 
     var settingsReq = new FormData()
@@ -74,6 +75,7 @@ function onSubmitAction(headerStates, bodyStates) {
     settingsReq.append('menus', menus);
     settingsReq.append('layout', values.selectLayout);
     settingsReq.append('nbr', values.items);
+    settingsReq.append('showButtonInfo', values.showButtonInfo);
 
     axios.post(`/l/builder/app/php/get-posts-by-menus`, settingsReq)
         .then(res => {
@@ -89,9 +91,10 @@ function onSubmitAction(headerStates, bodyStates) {
             doc.querySelector(".news").setAttribute("menus", menus);
             doc.querySelector(".news").setAttribute("layout", values.selectLayout.toString());
             doc.querySelector(".news").setAttribute("nbr", values.items.toString());
+            doc.querySelector(".news").setAttribute("showButtonInfo", values.showButtonInfo.toString());
 
             let content = doc.body.querySelector("section");
-            
+
             for (let i = 0; i < 6; i++) {
                 if (state.element.classList.contains("section")) {
                     novi.element.insertElement(content, state.element)

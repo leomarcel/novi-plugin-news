@@ -4,6 +4,7 @@ const Component = novi.react.Component;
 const InputNumber = novi.ui.inputNumber;
 const Editor = novi.editor;
 const Language = novi.language;
+const Checkbox = novi.ui.checkbox;
 import Multiselect from 'multiselect-react-dropdown';
 
 export default class Body extends Component {
@@ -11,7 +12,7 @@ export default class Body extends Component {
         super(props);
         let selectLayout = this.getTemplate(props.element);
         let menus = [];
-        Editor.setBodyHeight(220);
+        Editor.setBodyHeight(230);
         let selectMenu = null;
         let items = 10;
 
@@ -30,19 +31,20 @@ export default class Body extends Component {
                 items
             },
             element: props.element,
-            childElement: props.childElement
+            childElement: props.childElement,
+            showButtonInfo: false,
         };
 
         this._handleNumberItemChange = this._handleNumberItemChange.bind(this);
         this.getMenu = this.getMenu.bind(this);
         this.getTemplate = this.getTemplate.bind(this);
-        this.getPredefinedItems = this.getPredefinedItems.bind(this);
-        this.getPredefinedMenu = this.getPredefinedMenu.bind(this);
         this.arraySearch = this.arraySearch.bind(this);
         this.onRemove = this.onRemove.bind(this);
         this.onSelect = this.onSelect.bind(this);
         this.setEditor = this.setEditor.bind(this);
         this.getArrMenu = this.getArrMenu.bind(this);
+        this.getPredefined = this.getPredefined.bind(this);
+        this._handleShowButtonInfoChange = this._handleShowButtonInfoChange.bind(this);
 
         this.style = `
         .owl-wrap{
@@ -144,8 +146,7 @@ export default class Body extends Component {
                 let response = this.getArrMenu(res.data);
                 this.setState({ menus: response });
 
-                this.state.selectMenu = this.getPredefinedMenu(this.state.element);
-                this.state.items = this.getPredefinedItems(this.state.element);
+                this.getPredefined(this.state.element);
                 this.setEditor();
             });
     }
@@ -169,37 +170,19 @@ export default class Body extends Component {
         return response;
     }
 
-    getPredefinedItems(element) {
-        try {
-            for (let i = 0; i < 5; i++) {
-                if (element.getAttribute("nbr")) return element.getAttribute("nbr");
-                else element = element.parentElement
-            }
-            return 10;
-        } catch (e) {
-            return 10;
-        }
-    }
-
-    arraySearch(arr, val) {
-        for (let el = 0; el < arr.length; el++) {
-            if (arr[el].value == val) return arr[el].label   
-        }
-        return null
-    }
-
-    getPredefinedMenu(element) {
+    getPredefined(element) {
         try {
             for (let i = 0; i < 5; i++) {
                 if (element.getAttribute("menus")) {
+                    if (element.getAttribute("nbr")) this.setState({ nbr: element.getAttribute("nbr")});
+                    if (element.getAttribute("showbuttoninfo")) this.setState({ showButtonInfo: element.getAttribute("showbuttoninfo") === "true" });
                     let res = element.getAttribute("menus").split(",");
                     let arr = [];
                     let ms = this.state.menus;
                     for (let i = 0; i < res.length; i++) {
                         arr.push({ label: this.arraySearch(ms, res[i]), value: res[i] })
                     }
-                    this.state.placeholder = "";
-                    return arr;
+                    this.setState({ selectMenu: arr });
                 }
                 else element = element.parentElement
             }
@@ -207,6 +190,13 @@ export default class Body extends Component {
         } catch (e) {
             return null;
         }
+    }
+
+    arraySearch(arr, val) {
+        for (let el = 0; el < arr.length; el++) {
+            if (arr[el].value == val) return arr[el].label
+        }
+        return null
     }
 
     getTemplate(element) {
@@ -250,6 +240,11 @@ export default class Body extends Component {
                         <InputNumber min={1} max={5000} value={this.state.items} onChange={this._handleNumberItemChange} />
                     </div>
                 </div>
+                <div style={{ "marginTop": 10 }}>
+                    <Checkbox checked={this.state.showButtonInfo} onChange={this._handleShowButtonInfoChange}>
+                        Afficher un bouton "En savoir plus" sur les événements
+                    </Checkbox>
+                </div>
             </div>
         )
     }
@@ -272,8 +267,14 @@ export default class Body extends Component {
         });
     }
 
+    _handleShowButtonInfoChange(value) {
+        this.setState({
+            showButtonInfo: value
+        });
+    }
+
     setEditor(){
         let selectedListsLength = (this.state.selectMenu ? this.state.selectMenu.length : 0);
-        Editor.setBodyHeight(210 + (12 * selectedListsLength))
+        Editor.setBodyHeight(230 + (12 * selectedListsLength))
     }
 }
